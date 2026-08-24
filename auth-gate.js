@@ -48,7 +48,7 @@
   // esos cuatro sub-paneles de catálogo.
   var AF_READONLY_PANEL_IDS = ['afPanel-catalog', 'afPanel-trade', 'afPanel-brand', 'afPanel-mediakit', 'afPanel-packs'];
   var ALL_VIEW_IDS = [
-    'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives', 'view-campaigns',
+    'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives',
     'view-activationFramework', 'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
     'view-audit', 'view-quickwins', 'view-reports', 'view-notes', 'view-timeline',
     'view-settings', 'view-docs',

@@ -1022,11 +1022,11 @@
     { name: 'KPIs & OKRs H2 2026 (Final)', desc: 'Final KPIs and OKRs agreed with the Marketing Manager — Q3/Q4 key results and pilot campaign briefs.', href: '../04 - KPIs y OKRs H2 2026/Final_Propuesta_KPIs_OKRs_2026.docx' },
   ];
 
-  const DEFAULT_CAMPAIGN_PLATFORMS = ['Facebook', 'Instagram', 'Meta Ads (Total)', 'TikTok', 'Pinterest', 'Google Ads', 'LinkedIn'];
+  const DEFAULT_CAMPAIGN_PLATFORMS = ['Facebook', 'Instagram', 'Meta Ads (Total)', 'TikTok', 'Pinterest', 'Google Ads', 'LinkedIn', 'Amazon Attribution', 'Walmart'];
 
   const DEFAULT_CAMPAIGN_COLUMNS = [
     { key: 'platform', label: 'Platform', type: 'campaignPlatform', core: true },
-    { key: 'month', label: 'Month', type: 'month', core: true },
+    { key: 'period', label: 'Fecha', type: 'date', core: true },
     { key: 'campaign', label: 'Campaign', type: 'text', core: true },
     { key: 'reach', label: 'Reach', type: 'number', agg: 'sum', core: false },
     { key: 'impressions', label: 'Impressions', type: 'number', agg: 'sum', core: false },
@@ -1145,6 +1145,7 @@
     campaignPlatforms: 'dmg_campaign_platforms',
     campaignColumns: 'dmg_campaign_columns',
     campaignRows: 'dmg_campaign_rows',
+    campaignReports: 'dmg_campaign_reports_v1',
     projects: 'dmg_projects_v2',
     briefs: 'dmg_briefs_v1',
     contentInputs: 'dmg_content_inputs_v1',
@@ -1203,6 +1204,7 @@
   let campaignPlatforms = loadStore(STORE_KEYS.campaignPlatforms, DEFAULT_CAMPAIGN_PLATFORMS);
   let campaignColumns = loadStore(STORE_KEYS.campaignColumns, DEFAULT_CAMPAIGN_COLUMNS);
   let campaignRows = loadStore(STORE_KEYS.campaignRows, []);
+  let campaignReports = loadStore(STORE_KEYS.campaignReports, []);
   let projects = loadStore(STORE_KEYS.projects, DEFAULT_PROJECTS);
   let briefs = loadStore(STORE_KEYS.briefs, []);
   let contentInputs = loadStore(STORE_KEYS.contentInputs, []);
@@ -1233,6 +1235,7 @@
   function persistCampaignPlatforms() { saveStore(STORE_KEYS.campaignPlatforms, campaignPlatforms); }
   function persistCampaignColumns() { saveStore(STORE_KEYS.campaignColumns, campaignColumns); }
   function persistCampaignRows() { saveStore(STORE_KEYS.campaignRows, campaignRows); }
+  function persistCampaignReports() { saveStore(STORE_KEYS.campaignReports, campaignReports); }
   function persistProjects() { saveStore(STORE_KEYS.projects, projects); }
   function persistBriefs() { saveStore(STORE_KEYS.briefs, briefs); }
   function persistContentInputs() { saveStore(STORE_KEYS.contentInputs, contentInputs); }
@@ -1331,7 +1334,6 @@
     projects: { title: 'Projects', sub: 'Every project with its objective, expected result, deliverable, and task checklist' },
     tasks: { title: 'Tasks', sub: 'The 27 deliverables of the 30-60-90 day plan' },
     objectives: { title: 'Objectives & KPIs', sub: 'Business KPIs and the 3 OKRs for H2 2026' },
-    campaigns: { title: 'Campaign KPIs', sub: 'Performance by platform and campaign, month over month' },
     activationFramework: { title: 'Activation Framework', sub: 'Digital Activation Catalog, Activation Packs y Retailer Media Kit — para propuestas estandarizadas a retailers' },
     briefs: { title: 'Briefs', sub: 'Brief estándar de Digital Marketing y registro de todas las solicitudes' },
     contentInputs: { title: 'LinkedIn B2B', sub: 'Banco de contenido, tema, copy, estado y quién publica/repostea cada post' },
@@ -1340,7 +1342,7 @@
     access: { title: 'Access Matrix', sub: 'Who has access to what, at what level, and why' },
     audit: { title: 'Platform Audit', sub: 'Health check across all governed platforms' },
     quickwins: { title: 'Quick Wins', sub: 'Control center, todo lo que se está trabajando ahora mismo, por proyecto' },
-    reports: { title: 'Weekly Reports', sub: 'Generate reporting for leadership review' },
+    reports: { title: 'Reports', sub: 'Datos generales por canal y reportes estándar por campaña' },
     notes: { title: 'Meeting Notes', sub: 'Record decisions and action items' },
     timeline: { title: 'Project Timeline', sub: 'Foundation through full execution' },
     settings: { title: 'Settings', sub: 'Team, roles, and preferences' },
@@ -2879,76 +2881,15 @@
   document.getElementById('addQuickWinBtn').addEventListener('click', () => openQuickWinModal(null));
 
   /* ------------------------------------------------------------------------
-     REPORTS
+     REPORTS — tabs (General / Campañas)
      ------------------------------------------------------------------------ */
 
-  let activeReport = 'weekly';
-
-  document.querySelectorAll('.report-tab').forEach((tab) => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.report-tab').forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      activeReport = tab.dataset.report;
-      document.getElementById('reportOutput').innerHTML = '<p class="report-placeholder">Click "Generate report" to build a summary from the project\'s current status.</p>';
-    });
-  });
-
-  function buildReport(type) {
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const critical = platforms.filter((p) => p.status === 'critical');
-    const attention = platforms.filter((p) => p.status === 'attention');
-    const healthy = platforms.filter((p) => p.status === 'healthy');
-    const qwDone = quickWins.filter((q) => q.status === 'done').length;
-    const qwDoing = quickWins.filter((q) => q.status === 'doing').length;
-    const qwBacklog = quickWins.filter((q) => q.status === 'backlog').length;
-
-    const titles = { weekly: 'Weekly Report', monthly: 'Monthly Report', executive: 'Executive Summary' };
-    const scopes = {
-      weekly: 'This report covers governance and audit activity for the current week.',
-      monthly: 'This report summarizes governance and audit progress across the full month.',
-      executive: 'A high-level summary for leadership review — status, risk, and next steps.',
-    };
-
-    let html = `
-      <div class="report-title">${titles[type]} — Digital Marketing Governance</div>
-      <div class="report-meta">Distrivalto · Generated ${dateStr} · Prepared by Claudio Mendoza</div>
-      <p>${scopes[type]}</p>
-      <div class="report-stat-row">
-        <div class="report-stat"><b>${assets.length}</b><span>Assets Inventoried</span></div>
-        <div class="report-stat"><b>${platforms.length}</b><span>Platforms Audited</span></div>
-        <div class="report-stat"><b>${critical.length}</b><span>Critical Issues</span></div>
-        <div class="report-stat"><b>${qwDone}/${quickWins.length}</b><span>Quick Wins Done</span></div>
-      </div>
-      <div class="report-section">
-        <h4>Platform Status</h4>
-        <ul>
-          <li>${healthy.length} platforms healthy: ${healthy.map((p) => p.name).join(', ') || '—'}</li>
-          <li>${attention.length} platforms need attention: ${attention.map((p) => p.name).join(', ') || '—'}</li>
-          <li>${critical.length} platforms critical: ${critical.map((p) => p.name).join(', ') || '—'}</li>
-        </ul>
-      </div>
-      <div class="report-section">
-        <h4>Quick Wins</h4>
-        <ul><li>${qwBacklog} in backlog</li><li>${qwDoing} in progress</li><li>${qwDone} completed</li></ul>
-      </div>
-    `;
-
-    html += type === 'executive'
-      ? `<div class="report-section"><h4>Recommendation</h4><p>Governance structure is defined and access realignment is underway. Priority for the next cycle: close out the ${critical.length} critical platform issue${critical.length === 1 ? '' : 's'} and complete 2FA enforcement across the remaining platforms.</p></div>`
-      : `<div class="report-section"><h4>Next Steps</h4><p>Continue the platform audit on remaining flagged items and move backlog quick wins into progress as capacity allows.</p></div>`;
-
-    return html;
+  function reportsGoToTab(name) {
+    document.querySelectorAll('#reportsTabs .af-tab').forEach((t) => t.classList.toggle('active', t.dataset.reportsTab === name));
+    document.querySelectorAll('.reports-tab-panel').forEach((p) => p.classList.toggle('active', p.id === 'reportsPanel-' + name));
   }
-
-  document.getElementById('generateReportBtn').addEventListener('click', () => {
-    document.getElementById('reportOutput').innerHTML = buildReport(activeReport);
-  });
-
-  document.getElementById('printReportBtn').addEventListener('click', () => {
-    document.getElementById('view-reports').classList.add('printing');
-    window.print();
-    setTimeout(() => document.getElementById('view-reports').classList.remove('printing'), 500);
+  document.querySelectorAll('#reportsTabs .af-tab').forEach((tab) => {
+    tab.addEventListener('click', () => reportsGoToTab(tab.dataset.reportsTab));
   });
 
   /* ------------------------------------------------------------------------
@@ -4264,8 +4205,8 @@
     if (col.type === 'campaignPlatform') {
       return `<td><select class="cell-select" data-crow="${row.id}" data-ckey="platform">${campaignPlatformOptionsHtml(value)}</select></td>`;
     }
-    if (col.type === 'month') {
-      return `<td><input type="month" class="cell-select" data-crow="${row.id}" data-ckey="month" value="${escapeHtml(value)}"></td>`;
+    if (col.type === 'date') {
+      return `<td><input type="date" class="cell-select" data-crow="${row.id}" data-ckey="period" value="${escapeHtml(value)}"></td>`;
     }
     if (col.type === 'number') {
       return `<td contenteditable="true" data-crow="${row.id}" data-ckey="${col.key}" class="num-cell">${escapeHtml(value)}</td>`;
@@ -4279,7 +4220,7 @@
       const matchesSearch = !q || (r.campaign || '').toLowerCase().includes(q);
       const matchesPlatform = campaignState.platform === 'All' || r.platform === campaignState.platform;
       return matchesSearch && matchesPlatform;
-    }).sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+    }).sort((a, b) => (a.period || '').localeCompare(b.period || ''));
 
     const body = document.getElementById('campaignBody');
     const empty = document.getElementById('campaignEmpty');
@@ -4351,7 +4292,7 @@
     const row = { id: uid('camp') };
     campaignColumns.forEach((c) => {
       if (c.key === 'platform') row.platform = campaignPlatforms[0] || '';
-      else if (c.key === 'month') row.month = new Date().toISOString().slice(0, 7);
+      else if (c.key === 'period') row.period = new Date().toISOString().slice(0, 10);
       else row[c.key] = '';
     });
     campaignRows.unshift(row);
@@ -4397,51 +4338,45 @@
     if (prevPlatform && (prevPlatform === 'All Platforms' || campaignPlatforms.includes(prevPlatform))) platformSel.value = prevPlatform;
   }
 
-  function renderGrowthChart() {
-    const metricSel = document.getElementById('chartMetricSelect');
-    const platformSel = document.getElementById('chartPlatformSelect');
-    const canvas = document.getElementById('growthChartCanvas');
-    const emptyEl = document.getElementById('chartEmpty');
-    const metricKey = metricSel.value;
-    const platformFilter = platformSel.value;
+  // Agrupa campaignRows por fecha para armar una curva — reutilizable tanto
+  // para el chart general (filtrado por plataforma) como para la curva de
+  // un reporte de campaña puntual (filtrado por nombre de campaña).
+  function buildGrowthSeries(metricKey, opts) {
+    opts = opts || {};
     const col = campaignColumns.find((c) => c.key === metricKey);
-
-    const filtered = campaignRows.filter((r) => (platformFilter === 'All Platforms' || !platformFilter) || r.platform === platformFilter);
-
-    const byMonth = {};
+    if (!col) return null;
+    const filtered = campaignRows.filter((r) => {
+      const platformOk = !opts.platform || opts.platform === 'All Platforms' || r.platform === opts.platform;
+      const campaignOk = !opts.campaign || (r.campaign || '').trim().toLowerCase() === opts.campaign.trim().toLowerCase();
+      return platformOk && campaignOk;
+    });
+    const byDate = {};
     filtered.forEach((r) => {
-      const m = r.month || 'Unknown';
+      const d = r.period || 'Sin fecha';
       const v = parseFloat(r[metricKey]);
       if (isNaN(v)) return;
-      if (!byMonth[m]) byMonth[m] = [];
-      byMonth[m].push(v);
+      if (!byDate[d]) byDate[d] = [];
+      byDate[d].push(v);
     });
-
-    const months = Object.keys(byMonth).sort();
-
-    if (!col || months.length === 0 || typeof window.Chart === 'undefined') {
-      if (growthChart) { growthChart.destroy(); growthChart = null; }
-      canvas.hidden = true;
-      emptyEl.hidden = false;
-      return;
-    }
-    canvas.hidden = false;
-    emptyEl.hidden = true;
-
-    const values = months.map((m) => {
-      const arr = byMonth[m];
+    const dates = Object.keys(byDate).sort();
+    if (!dates.length) return { col, labels: [], values: [] };
+    const values = dates.map((d) => {
+      const arr = byDate[d];
       const sum = arr.reduce((a, b) => a + b, 0);
       return col.agg === 'avg' ? Math.round((sum / arr.length) * 100) / 100 : sum;
     });
+    return { col, labels: dates, values };
+  }
 
-    if (growthChart) growthChart.destroy();
-    growthChart = new window.Chart(canvas.getContext('2d'), {
+  function drawLineChart(canvas, series, label, existingChart) {
+    if (existingChart) existingChart.destroy();
+    return new window.Chart(canvas.getContext('2d'), {
       type: 'line',
       data: {
-        labels: months,
+        labels: series.labels,
         datasets: [{
-          label: `${col.label} — ${platformFilter || 'All Platforms'}`,
-          data: values,
+          label,
+          data: series.values,
           borderColor: '#1D2B7F',
           backgroundColor: 'rgba(61,183,255,0.18)',
           borderWidth: 2.5,
@@ -4461,6 +4396,28 @@
         },
       },
     });
+  }
+
+  function renderGrowthChart() {
+    const metricSel = document.getElementById('chartMetricSelect');
+    const platformSel = document.getElementById('chartPlatformSelect');
+    const canvas = document.getElementById('growthChartCanvas');
+    const emptyEl = document.getElementById('chartEmpty');
+    const metricKey = metricSel.value;
+    const platformFilter = platformSel.value;
+
+    const series = buildGrowthSeries(metricKey, { platform: platformFilter });
+
+    if (!series || series.labels.length === 0 || typeof window.Chart === 'undefined') {
+      if (growthChart) { growthChart.destroy(); growthChart = null; }
+      canvas.hidden = true;
+      emptyEl.hidden = false;
+      return;
+    }
+    canvas.hidden = false;
+    emptyEl.hidden = true;
+
+    growthChart = drawLineChart(canvas, series, `${series.col.label} — ${platformFilter || 'All Platforms'}`, growthChart);
   }
 
   document.getElementById('chartMetricSelect').addEventListener('change', renderGrowthChart);
@@ -4497,6 +4454,528 @@
   });
 
   /* ------------------------------------------------------------------------
+     REPORTS — Campañas: banco + builder de reporte estándar
+     Mismos campos para todas las campañas (Campaña y periodo, Mercado(s),
+     Producto(s) foco, Canales con sus KPIs, Presupuesto, Contenido publicado,
+     Resultados, Aprendizajes), más una curva de crecimiento que se arma sola
+     leyendo los datos ya cargados en General (tab de al lado), filtrados por
+     el nombre exacto de la campaña — así no se carga el dato dos veces.
+     ------------------------------------------------------------------------ */
+
+  let campaignReportSearchState = '';
+  let crBuilderState = null;
+  let crChart = null;
+
+  function freshCRState() {
+    return {
+      editingId: null,
+      name: '',
+      periodStart: '',
+      periodEnd: '',
+      markets: '',
+      focusProducts: '',
+      budgetConfirmed: '',
+      budgetSpent: '',
+      channels: [{ id: uid('ch'), name: '', kpis: [{ id: uid('kpi'), label: '', value: '' }] }],
+      content: [],
+      results: '',
+      learnings: '',
+      chartMetric: '',
+      chartPlatform: 'All Platforms',
+    };
+  }
+
+  function crFormatDate(iso) {
+    if (!iso) return '';
+    const parts = iso.split('-');
+    if (parts.length !== 3) return iso;
+    const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function crPeriodLabel(report) {
+    if (!report.periodStart && !report.periodEnd) return '—';
+    if (report.periodStart && report.periodEnd) return `${crFormatDate(report.periodStart)} – ${crFormatDate(report.periodEnd)}`;
+    return crFormatDate(report.periodStart || report.periodEnd);
+  }
+
+  // Convierte un screenshot subido a JPEG redimensionado (máx 1100px de
+  // ancho) antes de guardarlo como base64 — para no inflar el registro con
+  // fotos de cámara de varios MB cada una.
+  function crResizeImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(reader.error || new Error('No se pudo leer el archivo.'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+        img.onload = () => {
+          const maxWidth = 1100;
+          const scale = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function crMetricOptions() {
+    return campaignColumns.filter((c) => c.type === 'number');
+  }
+
+  function renderCRBuilderChart() {
+    const canvas = document.getElementById('crChartCanvas');
+    const empty = document.getElementById('crChartEmpty');
+    if (!canvas || !crBuilderState) return;
+    const s = crBuilderState;
+    const series = s.chartMetric && s.name.trim() ? buildGrowthSeries(s.chartMetric, { platform: s.chartPlatform, campaign: s.name }) : null;
+
+    if (!s.name.trim()) {
+      if (crChart) { crChart.destroy(); crChart = null; }
+      canvas.hidden = true;
+      empty.hidden = false;
+      empty.textContent = 'Escribe el nombre de la campaña arriba — la curva busca en General las filas con ese mismo nombre.';
+      return;
+    }
+    if (!series || series.labels.length === 0 || typeof window.Chart === 'undefined') {
+      if (crChart) { crChart.destroy(); crChart = null; }
+      canvas.hidden = true;
+      empty.hidden = false;
+      empty.textContent = `No hay datos en General todavía con el nombre de campaña "${s.name.trim()}". Cárgalos ahí (tab General) y esta curva se arma sola.`;
+      return;
+    }
+    canvas.hidden = false;
+    empty.hidden = true;
+    crChart = drawLineChart(canvas, series, `${series.col.label} — ${s.chartPlatform || 'All Platforms'}`, crChart);
+  }
+
+  function crChannelHtml(ch) {
+    return `
+      <div class="cr-channel-card" data-cr-channel="${ch.id}">
+        <div class="cr-channel-head">
+          <input type="text" class="text-input" list="crChannelSuggestions" placeholder="Canal — ej. Meta, TikTok, Amazon Attribution" data-cr-channel-name="${ch.id}" value="${escapeHtml(ch.name)}">
+          <button class="icon-btn" data-cr-delete-channel="${ch.id}" title="Eliminar canal" aria-label="Eliminar canal">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="cr-kpi-list">
+          ${ch.kpis.map((k) => `
+            <div class="cr-kpi-row" data-cr-kpi="${k.id}">
+              <input type="text" class="text-input" placeholder="KPI — ej. Reach" data-cr-kpi-field="label" data-cr-channel="${ch.id}" data-cr-kpi="${k.id}" value="${escapeHtml(k.label)}">
+              <input type="text" class="text-input" placeholder="Valor — ej. 42,300" data-cr-kpi-field="value" data-cr-channel="${ch.id}" data-cr-kpi="${k.id}" value="${escapeHtml(k.value)}">
+              <button class="icon-btn icon-btn-tiny" data-cr-delete-kpi="${k.id}" data-cr-channel="${ch.id}" title="Eliminar KPI" aria-label="Eliminar KPI">
+                <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </button>
+            </div>`).join('')}
+        </div>
+        <button class="btn btn-ghost btn-small" data-cr-add-kpi="${ch.id}">+ Agregar KPI</button>
+      </div>`;
+  }
+
+  function crContentItemHtml(it) {
+    return `
+      <div class="cr-content-card" data-cr-content="${it.id}">
+        <div class="cr-content-thumb">
+          ${it.image
+            ? `<img src="${it.image}" alt="">`
+            : `<label class="cr-content-upload">
+                <input type="file" accept="image/*" data-cr-content-upload="${it.id}" hidden>
+                <svg viewBox="0 0 24 24"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+                <span>Subir screenshot</span>
+              </label>`}
+        </div>
+        <input type="text" class="text-input" placeholder="Link (opcional)" data-cr-content-field="link" data-cr-content="${it.id}" value="${escapeHtml(it.link)}">
+        <input type="text" class="text-input" placeholder="Caption — ej. KV principal, Reel #1…" data-cr-content-field="caption" data-cr-content="${it.id}" value="${escapeHtml(it.caption)}">
+        <button class="icon-btn" data-cr-delete-content="${it.id}" title="Eliminar pieza" aria-label="Eliminar pieza">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>`;
+  }
+
+  function renderCRBuilderBody() {
+    const body = document.getElementById('crBuilderBody');
+    if (!body || !crBuilderState) return;
+    const s = crBuilderState;
+    const metricOptions = crMetricOptions();
+    if (!s.chartMetric && metricOptions.length) s.chartMetric = metricOptions[0].key;
+
+    document.getElementById('crBuilderTitle').textContent = s.editingId ? 'Editar Reporte de Campaña' : 'Nuevo Reporte de Campaña';
+
+    body.innerHTML = `
+      <datalist id="crChannelSuggestions">${campaignPlatforms.map((p) => `<option value="${escapeHtml(p)}">`).join('')}</datalist>
+
+      <div class="af-builder-step-label">Datos generales</div>
+      <div class="brief-form-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="field-group">
+          <label class="field-label">Nombre de la campaña</label>
+          <input type="text" class="text-input" id="crFormName" value="${escapeHtml(s.name)}" placeholder="Ej. Back to School USA 2026">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Mercado(s)</label>
+          <input type="text" class="text-input" id="crFormMarkets" value="${escapeHtml(s.markets)}" placeholder="Ej. USA — o Ecuador, República Dominicana">
+        </div>
+      </div>
+      <div class="brief-form-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="field-group">
+          <label class="field-label">Periodo — inicio</label>
+          <input type="date" class="text-input" id="crFormPeriodStart" value="${escapeHtml(s.periodStart)}">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Periodo — fin</label>
+          <input type="date" class="text-input" id="crFormPeriodEnd" value="${escapeHtml(s.periodEnd)}">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Producto(s) foco</label>
+        <input type="text" class="text-input" id="crFormFocusProducts" value="${escapeHtml(s.focusProducts)}" placeholder="SKU(s) hero de la campaña">
+      </div>
+
+      <div class="af-builder-step-label">Presupuesto</div>
+      <div class="brief-form-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="field-group">
+          <label class="field-label">Confirmado ($)</label>
+          <input type="text" class="text-input" id="crFormBudgetConfirmed" value="${escapeHtml(s.budgetConfirmed)}" placeholder="Ej. 1,200">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Gastado ($)</label>
+          <input type="text" class="text-input" id="crFormBudgetSpent" value="${escapeHtml(s.budgetSpent)}" placeholder="Ej. 980">
+        </div>
+      </div>
+
+      <div class="af-builder-step-label">Canales</div>
+      <p class="af-builder-hint">Un canal por cada plataforma que corrió (Meta, TikTok, Pinterest, Amazon Attribution, Walmart…), con sus KPIs headline — los campos que necesite cada canal, libres.</p>
+      <div class="cr-channel-list">${s.channels.map(crChannelHtml).join('')}</div>
+      <button class="btn btn-ghost btn-small" id="crAddChannelBtn">+ Agregar Canal</button>
+
+      <div class="af-builder-step-label">Curva de crecimiento</div>
+      <p class="af-builder-hint">Se arma sola con lo ya cargado en General (tab de al lado) para filas con este mismo nombre de campaña.</p>
+      <div class="chart-controls">
+        <div class="chart-control">
+          <label>Metric</label>
+          <select id="crChartMetricSelect">${metricOptions.map((c) => `<option value="${c.key}" ${c.key === s.chartMetric ? 'selected' : ''}>${escapeHtml(c.label)}</option>`).join('')}</select>
+        </div>
+        <div class="chart-control">
+          <label>Platform</label>
+          <select id="crChartPlatformSelect">${['All Platforms', ...campaignPlatforms].map((p) => `<option value="${escapeHtml(p)}" ${p === s.chartPlatform ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap chart-canvas-wrap-small">
+        <canvas id="crChartCanvas"></canvas>
+      </div>
+      <div class="chart-empty" id="crChartEmpty"></div>
+
+      <div class="af-builder-step-label">Contenido publicado</div>
+      <p class="af-builder-hint">Screenshots y/o links de los artes y videos que corrieron — o solo screenshots si no hay link.</p>
+      <div class="cr-content-grid">${s.content.map(crContentItemHtml).join('')}</div>
+      <button class="btn btn-ghost btn-small" id="crAddContentBtn">+ Agregar pieza</button>
+
+      <div class="af-builder-step-label">Resultados</div>
+      <p class="af-builder-hint">Sin meta contra qué comparar todavía — por ahora es mostrar lo que dio la campaña; el próximo año ya se compara campaña a campaña.</p>
+      <textarea class="text-area" id="crFormResults" rows="3" placeholder="Qué resultó la campaña, en libre…">${escapeHtml(s.results)}</textarea>
+
+      <div class="af-builder-step-label">Aprendizajes</div>
+      <textarea class="text-area" id="crFormLearnings" rows="3" placeholder="Qué se ajusta para la siguiente campaña (opcional)…">${escapeHtml(s.learnings)}</textarea>
+
+      <div class="af-builder-actions">
+        <div>${s.editingId ? '<button class="btn btn-ghost" id="crBuilderDeleteBtn">Eliminar reporte</button>' : ''}</div>
+        <div class="af-builder-actions-right">
+          <button class="btn btn-ghost" id="crBuilderCancelBtn">Cancelar</button>
+          <button class="btn btn-primary" id="crBuilderSaveBtn">Guardar Reporte</button>
+        </div>
+      </div>
+    `;
+
+    // ---- wiring: campos simples (sin re-render completo) ----
+    document.getElementById('crFormName').addEventListener('input', (e) => { s.name = e.target.value; });
+    document.getElementById('crFormName').addEventListener('change', renderCRBuilderChart);
+    document.getElementById('crFormMarkets').addEventListener('input', (e) => { s.markets = e.target.value; });
+    document.getElementById('crFormPeriodStart').addEventListener('input', (e) => { s.periodStart = e.target.value; });
+    document.getElementById('crFormPeriodEnd').addEventListener('input', (e) => { s.periodEnd = e.target.value; });
+    document.getElementById('crFormFocusProducts').addEventListener('input', (e) => { s.focusProducts = e.target.value; });
+    document.getElementById('crFormBudgetConfirmed').addEventListener('input', (e) => { s.budgetConfirmed = e.target.value; });
+    document.getElementById('crFormBudgetSpent').addEventListener('input', (e) => { s.budgetSpent = e.target.value; });
+    document.getElementById('crFormResults').addEventListener('input', (e) => { s.results = e.target.value; });
+    document.getElementById('crFormLearnings').addEventListener('input', (e) => { s.learnings = e.target.value; });
+
+    // ---- canales ----
+    body.querySelectorAll('[data-cr-channel-name]').forEach((el) => {
+      el.addEventListener('input', (e) => {
+        const ch = s.channels.find((c) => c.id === el.dataset.crChannelName);
+        if (ch) ch.name = e.target.value;
+      });
+    });
+    body.querySelectorAll('[data-cr-kpi-field]').forEach((el) => {
+      el.addEventListener('input', (e) => {
+        const ch = s.channels.find((c) => c.id === el.dataset.crChannel);
+        const kpi = ch && ch.kpis.find((k) => k.id === el.dataset.crKpi);
+        if (kpi) kpi[el.dataset.crKpiField] = e.target.value;
+      });
+    });
+    body.querySelectorAll('[data-cr-add-kpi]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const ch = s.channels.find((c) => c.id === btn.dataset.crAddKpi);
+        if (!ch) return;
+        ch.kpis.push({ id: uid('kpi'), label: '', value: '' });
+        renderCRBuilderBody();
+        renderCRBuilderChart();
+      });
+    });
+    body.querySelectorAll('[data-cr-delete-kpi]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const ch = s.channels.find((c) => c.id === btn.dataset.crChannel);
+        if (!ch) return;
+        ch.kpis = ch.kpis.filter((k) => k.id !== btn.dataset.crDeleteKpi);
+        renderCRBuilderBody();
+        renderCRBuilderChart();
+      });
+    });
+    body.querySelectorAll('[data-cr-delete-channel]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!confirm('¿Eliminar este canal y sus KPIs?')) return;
+        s.channels = s.channels.filter((c) => c.id !== btn.dataset.crDeleteChannel);
+        renderCRBuilderBody();
+        renderCRBuilderChart();
+      });
+    });
+    document.getElementById('crAddChannelBtn').addEventListener('click', () => {
+      s.channels.push({ id: uid('ch'), name: '', kpis: [{ id: uid('kpi'), label: '', value: '' }] });
+      renderCRBuilderBody();
+      renderCRBuilderChart();
+    });
+
+    // ---- contenido publicado ----
+    body.querySelectorAll('[data-cr-content-field]').forEach((el) => {
+      el.addEventListener('input', (e) => {
+        const it = s.content.find((c) => c.id === el.dataset.crContent);
+        if (it) it[el.dataset.crContentField] = e.target.value;
+      });
+    });
+    body.querySelectorAll('[data-cr-delete-content]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        s.content = s.content.filter((c) => c.id !== btn.dataset.crDeleteContent);
+        renderCRBuilderBody();
+        renderCRBuilderChart();
+      });
+    });
+    body.querySelectorAll('[data-cr-content-upload]').forEach((input) => {
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          const dataUrl = await crResizeImageFile(file);
+          const it = s.content.find((c) => c.id === input.dataset.crContentUpload);
+          if (it) it.image = dataUrl;
+          renderCRBuilderBody();
+          renderCRBuilderChart();
+        } catch (err) {
+          alert('No se pudo cargar esa imagen. Prueba con otro archivo.');
+        }
+      });
+    });
+    document.getElementById('crAddContentBtn').addEventListener('click', () => {
+      s.content.push({ id: uid('cc'), image: '', link: '', caption: '' });
+      renderCRBuilderBody();
+      renderCRBuilderChart();
+    });
+
+    // ---- curva de crecimiento ----
+    document.getElementById('crChartMetricSelect').addEventListener('change', (e) => { s.chartMetric = e.target.value; renderCRBuilderChart(); });
+    document.getElementById('crChartPlatformSelect').addEventListener('change', (e) => { s.chartPlatform = e.target.value; renderCRBuilderChart(); });
+
+    document.getElementById('crBuilderCancelBtn').addEventListener('click', closeCRBuilder);
+    document.getElementById('crBuilderSaveBtn').addEventListener('click', saveCRFromBuilder);
+    const delBtn = document.getElementById('crBuilderDeleteBtn');
+    if (delBtn) delBtn.addEventListener('click', () => {
+      if (!confirm('¿Eliminar este reporte de campaña?')) return;
+      campaignReports = campaignReports.filter((r) => r.id !== s.editingId);
+      persistCampaignReports();
+      closeCRBuilder();
+      renderCampaignReportBank();
+    });
+
+    renderCRBuilderChart();
+  }
+
+  function openCRBuilder(existing) {
+    crBuilderState = existing ? JSON.parse(JSON.stringify(existing)) : freshCRState();
+    if (existing) crBuilderState.editingId = existing.id;
+    renderCRBuilderBody();
+    document.getElementById('crBuilderOverlay').classList.add('active');
+  }
+
+  function closeCRBuilder() {
+    document.getElementById('crBuilderOverlay').classList.remove('active');
+    if (crChart) { crChart.destroy(); crChart = null; }
+    crBuilderState = null;
+  }
+
+  function saveCRFromBuilder() {
+    const s = crBuilderState;
+    if (!s.name.trim()) { alert('Ponle un nombre a la campaña antes de guardar.'); return; }
+    const cleaned = {
+      id: s.editingId || uid('creport'),
+      name: s.name.trim(),
+      periodStart: s.periodStart,
+      periodEnd: s.periodEnd,
+      markets: s.markets.trim(),
+      focusProducts: s.focusProducts.trim(),
+      budgetConfirmed: s.budgetConfirmed.trim(),
+      budgetSpent: s.budgetSpent.trim(),
+      channels: s.channels
+        .map((ch) => ({ id: ch.id, name: ch.name.trim(), kpis: ch.kpis.filter((k) => k.label.trim() || k.value.trim()) }))
+        .filter((ch) => ch.name),
+      content: s.content,
+      results: s.results.trim(),
+      learnings: s.learnings.trim(),
+      createdDate: s.editingId
+        ? (campaignReports.find((r) => r.id === s.editingId) || {}).createdDate
+        : new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+    };
+    if (s.editingId) {
+      const idx = campaignReports.findIndex((r) => r.id === s.editingId);
+      if (idx !== -1) campaignReports[idx] = cleaned; else campaignReports.unshift(cleaned);
+    } else {
+      campaignReports.unshift(cleaned);
+    }
+    persistCampaignReports();
+    closeCRBuilder();
+    renderCampaignReportBank();
+  }
+
+  function renderCampaignReportBank() {
+    const body = document.getElementById('campaignReportBody');
+    const empty = document.getElementById('campaignReportEmpty');
+    if (!body) return;
+    const q = campaignReportSearchState.toLowerCase();
+    const rows = !q ? campaignReports : campaignReports.filter((r) =>
+      (r.name || '').toLowerCase().includes(q) || (r.markets || '').toLowerCase().includes(q));
+
+    if (rows.length === 0) { body.innerHTML = ''; if (empty) empty.hidden = false; return; }
+    if (empty) empty.hidden = true;
+
+    body.innerHTML = rows.map((r) => `
+      <tr>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${crPeriodLabel(r)}</td>
+        <td>${escapeHtml(r.markets || '—')}</td>
+        <td>${escapeHtml((r.channels || []).map((c) => c.name).filter(Boolean).join(', ') || '—')}</td>
+        <td class="af-campaign-actions-cell">
+          <button class="icon-btn" data-cr-view="${r.id}" aria-label="Ver / Editar" title="Ver / Editar"><svg viewBox="0 0 24 24"><path d="M4 12s3.5-6 8-6 8 6 8 6-3.5 6-8 6-8-6-8-6z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          <button class="icon-btn" data-cr-export="${r.id}" aria-label="Exportar PDF" title="Exportar PDF"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 13h6M9 16h6M9 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+        </td>
+      </tr>
+    `).join('');
+
+    body.querySelectorAll('[data-cr-view]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const r = campaignReports.find((x) => x.id === btn.dataset.crView);
+        if (r) openCRBuilder(r);
+      });
+    });
+    body.querySelectorAll('[data-cr-export]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const r = campaignReports.find((x) => x.id === btn.dataset.crExport);
+        if (r) exportCampaignReportPDF(r);
+      });
+    });
+  }
+
+  function crKpiListHtml(kpis) {
+    if (!kpis || !kpis.length) return `<p class="cr-print-empty">Sin KPIs cargados.</p>`;
+    return `<ul class="cr-print-kpi-list">${kpis.filter((k) => k.label.trim() || k.value.trim()).map((k) => `<li><b>${escapeHtml(k.label || '—')}:</b> ${escapeHtml(k.value || '—')}</li>`).join('')}</ul>`;
+  }
+
+  function exportCampaignReportPDF(report) {
+    const area = document.getElementById('crPrintArea');
+    if (!area) return;
+
+    // Snapshot de la curva de crecimiento como imagen — se arma con la
+    // primera métrica numérica disponible, filtrada por el nombre exacto
+    // de esta campaña, para que el PDF no dependa de un canvas en pantalla.
+    let chartImg = '';
+    const metricCol = crMetricOptions()[0];
+    if (metricCol && typeof window.Chart !== 'undefined') {
+      const series = buildGrowthSeries(metricCol.key, { campaign: report.name });
+      if (series && series.labels.length) {
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 900; offCanvas.height = 320;
+        offCanvas.style.position = 'fixed'; offCanvas.style.left = '-9999px';
+        document.body.appendChild(offCanvas);
+        const offChart = drawLineChart(offCanvas, series, `${series.col.label}`, null);
+        chartImg = offChart.toBase64Image();
+        offChart.destroy();
+        document.body.removeChild(offCanvas);
+      }
+    }
+
+    const channelsHtml = (report.channels || []).length
+      ? report.channels.map((ch) => `
+          <div class="cr-print-channel">
+            <div class="cr-print-channel-name">${escapeHtml(ch.name)}</div>
+            ${crKpiListHtml(ch.kpis)}
+          </div>`).join('')
+      : `<p class="cr-print-empty">Sin canales cargados.</p>`;
+
+    const contentHtml = (report.content || []).filter((c) => c.image || c.link || c.caption).length
+      ? `<div class="cr-print-content-grid">${report.content.map((c) => {
+          if (!c.image && !c.link && !c.caption) return '';
+          return `
+            <div class="cr-print-content-item">
+              ${c.image ? `<img src="${c.image}" alt="">` : `<div class="cr-print-content-placeholder">Sin screenshot</div>`}
+              ${c.caption ? `<div class="cr-print-content-caption">${escapeHtml(c.caption)}</div>` : ''}
+              ${c.link ? `<div class="cr-print-content-link">${escapeHtml(c.link)}</div>` : ''}
+            </div>`;
+        }).join('')}</div>`
+      : `<p class="cr-print-empty">Sin contenido cargado.</p>`;
+
+    area.innerHTML = `
+      <div class="cr-print-header">
+        <div class="cr-print-kicker">REPORTE DE CAMPAÑA · DIGITAL MARKETING</div>
+        <div class="cr-print-title">${escapeHtml(report.name)}</div>
+        <div class="cr-print-sub">${crPeriodLabel(report)} · ${escapeHtml(report.markets || 'Mercado sin especificar')}${report.focusProducts ? ' · ' + escapeHtml(report.focusProducts) : ''}</div>
+      </div>
+
+      <div class="cr-print-stat-row">
+        <div class="cr-print-stat"><span>Presupuesto confirmado</span><b>${escapeHtml(report.budgetConfirmed ? '$' + report.budgetConfirmed : '—')}</b></div>
+        <div class="cr-print-stat"><span>Presupuesto gastado</span><b>${escapeHtml(report.budgetSpent ? '$' + report.budgetSpent : '—')}</b></div>
+        <div class="cr-print-stat"><span>Canales</span><b>${(report.channels || []).length}</b></div>
+      </div>
+
+      <div class="cr-print-section-label">Resultados por canal</div>
+      <div class="cr-print-channels">${channelsHtml}</div>
+
+      ${chartImg ? `
+      <div class="cr-print-section-label">Curva de crecimiento</div>
+      <img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
+
+      <div class="cr-print-section-label">Contenido publicado</div>
+      ${contentHtml}
+
+      <div class="cr-print-section-label">Resultados</div>
+      <p class="cr-print-text">${escapeHtml(report.results || 'Sin registrar.')}</p>
+
+      <div class="cr-print-section-label">Aprendizajes</div>
+      <p class="cr-print-text">${escapeHtml(report.learnings || 'Sin registrar.')}</p>
+
+      <div class="cr-print-footer">Distrivalto · Digital Marketing · Reporte generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+    `;
+    area.classList.add('printing');
+    window.print();
+    setTimeout(() => area.classList.remove('printing'), 500);
+  }
+
+  document.getElementById('newCampaignReportBtn').addEventListener('click', () => openCRBuilder(null));
+  document.getElementById('crBuilderCloseBtn').addEventListener('click', closeCRBuilder);
+  document.getElementById('crBuilderOverlay').addEventListener('click', (e) => { if (e.target.id === 'crBuilderOverlay') closeCRBuilder(); });
+  document.getElementById('campaignReportSearch').addEventListener('input', (e) => { campaignReportSearchState = e.target.value; renderCampaignReportBank(); });
+
+  /* ------------------------------------------------------------------------
      INIT
      ------------------------------------------------------------------------ */
 
@@ -4529,6 +5008,7 @@
     renderChartControls();
     renderGrowthChart();
     renderActivationFramework();
+    renderCampaignReportBank();
   }
 
   // Vuelve a cargar los 19 tipos de dato desde window.__HUB_REMOTE_DATA
@@ -4551,6 +5031,7 @@
     campaignPlatforms = loadStore(STORE_KEYS.campaignPlatforms, DEFAULT_CAMPAIGN_PLATFORMS);
     campaignColumns = loadStore(STORE_KEYS.campaignColumns, DEFAULT_CAMPAIGN_COLUMNS);
     campaignRows = loadStore(STORE_KEYS.campaignRows, []);
+    campaignReports = loadStore(STORE_KEYS.campaignReports, []);
     projects = loadStore(STORE_KEYS.projects, DEFAULT_PROJECTS);
     briefs = loadStore(STORE_KEYS.briefs, []);
     contentInputs = loadStore(STORE_KEYS.contentInputs, []);

@@ -66,10 +66,6 @@
         <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>
         <span>Objectives &amp; KPIs</span>
       </button>
-      <button class="nav-item" data-view="campaigns">
-        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 19V9M10 19V5M16 19v-7M20 19v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <span>Campaign KPIs</span>
-      </button>
       <button class="nav-item" data-view="activationFramework">
         <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="4" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14.5 20.5l2 2 3.5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <span>Activation Framework</span>
@@ -108,7 +104,7 @@
       <span class="sidebar-group-label">Reporting</span>
       <button class="nav-item" data-view="reports">
         <svg viewBox="0 0 24 24" class="nav-icon"><path d="M6 20V10M12 20V4M18 20v-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <span>Weekly Reports</span>
+        <span>Reports</span>
       </button>
       <button class="nav-item" data-view="notes">
         <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -304,51 +300,6 @@
       </section>
 
       <!-- ============ CAMPAIGN KPIs ============ -->
-      <section class="view" id="view-campaigns">
-        <div class="toolbar">
-          <div class="search-field">
-            <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <input type="text" id="campaignSearch" placeholder="Search campaign…">
-          </div>
-          <div class="filter-group" id="campaignPlatformFilters"></div>
-          <div class="toolbar-spacer"></div>
-          <button class="btn btn-ghost" id="addCampaignPlatformBtn">+ Add Platform</button>
-          <button class="btn btn-ghost" id="addCampaignColumnBtn">+ Add KPI Column</button>
-          <button class="btn btn-primary" id="addCampaignRowBtn">+ Add Entry</button>
-        </div>
-
-        <div class="table-card">
-          <table class="data-table" id="campaignTable">
-            <thead id="campaignHead"></thead>
-            <tbody id="campaignBody"></tbody>
-          </table>
-          <div class="table-empty" id="campaignEmpty" hidden>No campaign entries yet — add your first one.</div>
-        </div>
-
-        <div class="panel-card chart-panel">
-          <div class="panel-card-head">
-            <h3>Growth Curve — Month over Month</h3>
-          </div>
-          <div class="chart-controls">
-            <div class="chart-control">
-              <label>Metric</label>
-              <select id="chartMetricSelect"></select>
-            </div>
-            <div class="chart-control">
-              <label>Platform</label>
-              <select id="chartPlatformSelect"></select>
-            </div>
-            <div class="toolbar-spacer"></div>
-            <button class="btn btn-ghost" id="exportChartPngBtn">Export chart (PNG)</button>
-            <button class="btn btn-ghost" id="exportCsvBtn">Export data (CSV)</button>
-          </div>
-          <div class="chart-canvas-wrap">
-            <canvas id="growthChartCanvas"></canvas>
-          </div>
-          <div class="chart-empty" id="chartEmpty" hidden>Add at least one campaign entry to see the growth curve.</div>
-        </div>
-      </section>
-
       <!-- ============ BRIEFS ============ -->
       <!-- ============ ACTIVATION FRAMEWORK ============ -->
       <section class="view" id="view-activationFramework">
@@ -851,19 +802,73 @@
 
       <!-- ============ WEEKLY REPORTS ============ -->
       <section class="view" id="view-reports">
-        <div class="report-tabs" id="reportTabs">
-          <button class="report-tab active" data-report="weekly">Weekly Report</button>
-          <button class="report-tab" data-report="monthly">Monthly Report</button>
-          <button class="report-tab" data-report="executive">Executive Summary</button>
+        <div class="af-tabs" id="reportsTabs">
+          <button class="af-tab active" data-reports-tab="general">General</button>
+          <button class="af-tab" data-reports-tab="campaigns">Campañas</button>
         </div>
 
-        <div class="panel-card report-panel">
-          <div class="report-toolbar">
-            <button class="btn btn-secondary" id="generateReportBtn">Generate report</button>
-            <button class="btn btn-ghost" id="printReportBtn">Print / PDF</button>
+        <div class="reports-tab-panel active" id="reportsPanel-general">
+          <p class="view-intro" style="margin-bottom:14px;">Datos generales de cada canal — alcance, impresiones, seguidores, interacciones — a la semana, al mes o al año, sin atarse a una campaña puntual. Es también la fuente de la curva de crecimiento que se usa en cada reporte de Campañas.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="campaignSearch" placeholder="Buscar campaña…">
+            </div>
+            <div class="filter-group" id="campaignPlatformFilters"></div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost" id="addCampaignPlatformBtn">+ Add Platform</button>
+            <button class="btn btn-ghost" id="addCampaignColumnBtn">+ Add KPI Column</button>
+            <button class="btn btn-primary" id="addCampaignRowBtn">+ Add Entry</button>
           </div>
-          <div class="report-output" id="reportOutput">
-            <p class="report-placeholder">Click "Generate report" to build a summary from the project's current status.</p>
+
+          <div class="table-card">
+            <table class="data-table" id="campaignTable">
+              <thead id="campaignHead"></thead>
+              <tbody id="campaignBody"></tbody>
+            </table>
+            <div class="table-empty" id="campaignEmpty" hidden>No hay entradas todavía — agrega la primera.</div>
+          </div>
+
+          <div class="panel-card chart-panel">
+            <div class="panel-card-head">
+              <h3>Curva de Crecimiento</h3>
+            </div>
+            <div class="chart-controls">
+              <div class="chart-control">
+                <label>Metric</label>
+                <select id="chartMetricSelect"></select>
+              </div>
+              <div class="chart-control">
+                <label>Platform</label>
+                <select id="chartPlatformSelect"></select>
+              </div>
+              <div class="toolbar-spacer"></div>
+              <button class="btn btn-ghost" id="exportChartPngBtn">Export chart (PNG)</button>
+              <button class="btn btn-ghost" id="exportCsvBtn">Export data (CSV)</button>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="growthChartCanvas"></canvas>
+            </div>
+            <div class="chart-empty" id="chartEmpty" hidden>Agrega al menos una entrada para ver la curva de crecimiento.</div>
+          </div>
+        </div>
+
+        <div class="reports-tab-panel" id="reportsPanel-campaigns">
+          <p class="view-intro" style="margin-bottom:14px;">Reporte estándar por campaña — mismos campos para todas (Back to School, Heritage, y las que siguen), para poder compararlas y ver tendencia a lo largo del año. La curva de crecimiento de cada reporte se arma sola con los datos ya cargados en General.</p>
+          <div class="toolbar">
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="campaignReportSearch" placeholder="Buscar reporte de campaña…">
+            </div>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-primary" id="newCampaignReportBtn">+ Nuevo Reporte</button>
+          </div>
+          <div class="table-card">
+            <table class="data-table" id="campaignReportTable">
+              <thead><tr><th>Campaña</th><th>Periodo</th><th>Mercado(s)</th><th>Canales</th><th></th></tr></thead>
+              <tbody id="campaignReportBody"></tbody>
+            </table>
+            <div class="table-empty" id="campaignReportEmpty" hidden>Todavía no hay reportes de campaña. Usa "+ Nuevo Reporte" para crear el primero (empezando por Back to School).</div>
           </div>
         </div>
       </section>
@@ -976,6 +981,22 @@
 
 <!-- Área imprimible para exportar una campaña a PDF (window.print) -->
 <div class="af-campaign-print-area" id="afCampaignPrintArea"></div>
+
+<!-- ============ REPORTS — CAMPAIGN REPORT BUILDER ============ -->
+<div class="modal-overlay af-builder-overlay" id="crBuilderOverlay">
+  <div class="modal af-builder-modal" id="crBuilderBox" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="crBuilderTitle">Nuevo Reporte de Campaña</h3>
+      <button class="icon-btn" id="crBuilderCloseBtn" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body af-builder-body" id="crBuilderBody"></div>
+  </div>
+</div>
+
+<!-- Área imprimible para exportar un reporte de campaña a PDF -->
+<div class="cr-print-area" id="crPrintArea"></div>
 
 <script src="auth-gate.js"></script>
 </body>

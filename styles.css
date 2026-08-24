@@ -913,6 +913,9 @@ ul { list-style: none; }
 .af-tab-panel { display: none; }
 .af-tab-panel.active { display: block; }
 
+.reports-tab-panel { display: none; }
+.reports-tab-panel.active { display: block; }
+
 .af-callout {
   font-size: 13px;
   color: var(--ink-soft);
@@ -1021,6 +1024,72 @@ ul { list-style: none; }
 .af-campaign-print-area { display: none; padding: 30px; }
 .af-print-title { font-size: 20px; color: var(--navy); font-weight: 700; margin-bottom: 4px; }
 .af-print-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 20px; }
+
+/* ==========================================================================
+   REPORTS — tab Campañas: builder de canales/KPIs/contenido
+   ========================================================================== */
+
+.btn-small { padding: 6px 12px; font-size: 12.5px; border: 1px dashed var(--line); border-radius: 8px; }
+.btn-small:hover { border-color: var(--navy); }
+
+.chart-canvas-wrap-small { height: 220px; }
+
+.cr-channel-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.cr-channel-card { background: var(--bg); border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 14px; }
+.cr-channel-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cr-channel-head .text-input { flex: 1; font-weight: 700; color: var(--navy); }
+.cr-kpi-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.cr-kpi-row { display: flex; align-items: center; gap: 6px; }
+.cr-kpi-row .text-input { flex: 1; }
+
+.cr-content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 10px; }
+.cr-content-card { border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+.cr-content-card .icon-btn { position: absolute; top: 6px; right: 6px; background: var(--white); }
+.cr-content-thumb { width: 100%; height: 110px; border-radius: 8px; overflow: hidden; background: rgba(29,43,127,0.04); display: flex; align-items: center; justify-content: center; }
+.cr-content-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.cr-content-upload { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink-faint); font-size: 11.5px; cursor: pointer; width: 100%; height: 100%; justify-content: center; }
+.cr-content-upload svg { width: 22px; height: 22px; }
+.cr-content-upload:hover { color: var(--navy); }
+.cr-content-card .text-input { font-size: 12px; padding: 7px 9px; }
+
+/* Área imprimible del Reporte de Campaña (PDF): oculta en pantalla, visible
+   solo al imprimir — ver @media print más abajo. */
+.cr-print-area { display: none; padding: 34px; }
+
+.cr-print-header { border-bottom: 2px solid var(--navy); padding-bottom: 16px; margin-bottom: 20px; }
+.cr-print-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue); margin-bottom: 6px; }
+.cr-print-title { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.cr-print-sub { font-size: 13px; color: var(--ink-soft); }
+
+.cr-print-stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0 22px; }
+.cr-print-stat { background: #F2F7FF; border-radius: 14px; padding: 12px 18px; min-width: 130px; }
+.cr-print-stat b { display: block; font-size: 20px; color: var(--navy); }
+.cr-print-stat span { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+
+.cr-print-section-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blue); margin: 24px 0 10px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.cr-print-section-label:first-of-type { border-top: none; padding-top: 0; }
+
+.cr-print-channels { display: flex; flex-direction: column; gap: 12px; }
+.cr-print-channel { background: #FAFCFF; border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 16px; break-inside: avoid; }
+.cr-print-channel-name { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.cr-print-kpi-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
+.cr-print-kpi-list li { font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line-soft); padding-bottom: 4px; }
+.cr-print-kpi-list b { color: var(--navy); }
+
+.cr-print-content-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.cr-print-content-item { border: 1px solid var(--line-soft); border-radius: 10px; overflow: hidden; break-inside: avoid; }
+.cr-print-content-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.cr-print-content-placeholder { width: 100%; height: 120px; background: var(--line-soft); display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 11px; }
+.cr-print-content-caption { font-size: 11.5px; color: var(--ink-soft); padding: 6px 8px 2px; }
+.cr-print-content-link { font-size: 10.5px; color: var(--blue-soft); padding: 0 8px 8px; word-break: break-all; display: block; }
+
+.cr-print-chart { width: 100%; max-width: 100%; border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px; }
+
+.cr-print-text { font-size: 13px; color: var(--ink-soft); line-height: 1.7; white-space: pre-wrap; }
+
+.cr-print-footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 10.5px; color: var(--ink-faint); text-align: center; }
+
+.cr-print-empty { font-size: 12.5px; color: var(--ink-faint); font-style: italic; }
 
 .report-placeholder { color: var(--ink-faint); font-size: 14px; }
 
@@ -1851,6 +1920,8 @@ ul { list-style: none; }
   .view.printing { display: block !important; }
   .af-campaign-print-area { display: none; }
   .af-campaign-print-area.printing { display: block !important; }
+  .cr-print-area { display: none; }
+  .cr-print-area.printing { display: block !important; }
   body { background: white; }
 }
 
