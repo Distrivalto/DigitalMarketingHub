@@ -1033,6 +1033,9 @@
     { key: 'clicks', label: 'Clicks', type: 'number', agg: 'sum', core: false },
     { key: 'ctr', label: 'CTR (%)', type: 'number', agg: 'avg', core: false },
     { key: 'spend', label: 'Spend ($)', type: 'number', agg: 'sum', core: false },
+    { key: 'interactions', label: 'Interacciones', type: 'number', agg: 'sum', core: false },
+    { key: 'profileVisits', label: 'Visitas', type: 'number', agg: 'sum', core: false },
+    { key: 'followers', label: 'Seguidores', type: 'number', agg: 'sum', core: false },
   ];
 
   /* ------------------------------------------------------------------------
@@ -4501,6 +4504,7 @@
       content: [],
       results: '',
       observations: '',
+      methodology: '',
       learnings: '',
       nextSteps: '',
       chartMetric: '',
@@ -4751,6 +4755,10 @@
       <p class="af-builder-hint">Notas del día a día — qué llamó la atención, qué se ajustó a mitad de campaña, contexto que no se ve solo en los números.</p>
       <textarea class="text-area" id="crFormObservations" rows="3" placeholder="Ej. Instagram concentró el spend, Facebook casi no tuvo delivery…">${escapeHtml(s.observations)}</textarea>
 
+      <div class="af-builder-step-label">Metodología y limitaciones de medición</div>
+      <p class="af-builder-hint">Qué mide cada fuente y qué se le escapa (ventanas de atribución, compras diferidas, cross-device) — para que quien lea el reporte no tome los números como el 100% del impacto real.</p>
+      <textarea class="text-area" id="crFormMethodology" rows="3" placeholder="Ej. Amazon Attribution solo cuenta compras dentro de su ventana de atribución vía el último clic…">${escapeHtml(s.methodology)}</textarea>
+
       <div class="af-builder-step-label">Aprendizajes</div>
       <textarea class="text-area" id="crFormLearnings" rows="3" placeholder="Qué se ajusta para la siguiente campaña (opcional)…">${escapeHtml(s.learnings)}</textarea>
 
@@ -4788,6 +4796,7 @@
     document.getElementById('crFormBudgetSpent').addEventListener('input', (e) => { s.budgetSpent = e.target.value; updateBudgetPctLine(); });
     document.getElementById('crFormResults').addEventListener('input', (e) => { s.results = e.target.value; });
     document.getElementById('crFormObservations').addEventListener('input', (e) => { s.observations = e.target.value; });
+    document.getElementById('crFormMethodology').addEventListener('input', (e) => { s.methodology = e.target.value; });
     document.getElementById('crFormLearnings').addEventListener('input', (e) => { s.learnings = e.target.value; });
     document.getElementById('crFormNextSteps').addEventListener('input', (e) => { s.nextSteps = e.target.value; });
 
@@ -4933,6 +4942,7 @@
       content: s.content,
       results: s.results.trim(),
       observations: s.observations.trim(),
+      methodology: s.methodology.trim(),
       learnings: s.learnings.trim(),
       nextSteps: s.nextSteps.trim(),
       createdDate: s.editingId
@@ -5089,6 +5099,10 @@
 
       <div class="cr-print-section-label cr-print-section-label-commerce">Resultados de Comercio / Atribución</div>
       <div class="cr-print-channels">${commerceChannelsHtml}</div>
+
+      ${report.methodology ? `
+      <div class="cr-print-section-label">Metodología y limitaciones de medición</div>
+      <p class="cr-print-text">${escapeHtml(report.methodology)}</p>` : ''}
 
       <div class="cr-print-section-label">Curva de crecimiento</div>
       ${chartImg ? `<img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
