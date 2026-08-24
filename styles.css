@@ -1052,6 +1052,11 @@ ul { list-style: none; }
 .cr-content-upload:hover { color: var(--navy); }
 .cr-content-card .text-input { font-size: 12px; padding: 7px 9px; }
 
+.cr-budget-pct { font-size: 12.5px; color: var(--ink-faint); margin: -6px 0 10px; }
+.cr-budget-pct-over { color: var(--red); font-weight: 700; }
+
+.cr-channel-list-commerce .cr-channel-card { background: #FFF9EE; border-color: rgba(232,169,61,0.3); }
+
 /* Área imprimible del Reporte de Campaña (PDF): oculta en pantalla, visible
    solo al imprimir — ver @media print más abajo. */
 .cr-print-area { display: none; padding: 34px; }
@@ -1061,16 +1066,25 @@ ul { list-style: none; }
 .cr-print-title { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
 .cr-print-sub { font-size: 13px; color: var(--ink-soft); }
 
+.cr-print-objective { font-size: 13px; color: var(--ink-soft); background: #F2F7FF; border-radius: 10px; padding: 10px 14px; margin-top: 14px; line-height: 1.55; }
+.cr-print-objective b { color: var(--navy); }
+
 .cr-print-stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0 22px; }
 .cr-print-stat { background: #F2F7FF; border-radius: 14px; padding: 12px 18px; min-width: 130px; }
 .cr-print-stat b { display: block; font-size: 20px; color: var(--navy); }
 .cr-print-stat span { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
 
+.cr-print-stat-row-commerce { margin: 0; }
+.cr-print-stat-commerce { background: var(--amber-bg); }
+.cr-print-stat-commerce b { color: var(--amber); }
+
 .cr-print-section-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blue); margin: 24px 0 10px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
 .cr-print-section-label:first-of-type { border-top: none; padding-top: 0; }
+.cr-print-section-label-commerce { color: var(--amber); }
 
 .cr-print-channels { display: flex; flex-direction: column; gap: 12px; }
 .cr-print-channel { background: #FAFCFF; border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 16px; break-inside: avoid; }
+.cr-print-channel-commerce { background: #FFFBF2; border-color: rgba(232,169,61,0.35); }
 .cr-print-channel-name { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
 .cr-print-kpi-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
 .cr-print-kpi-list li { font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line-soft); padding-bottom: 4px; }
@@ -1084,6 +1098,7 @@ ul { list-style: none; }
 .cr-print-content-link { font-size: 10.5px; color: var(--blue-soft); padding: 0 8px 8px; word-break: break-all; display: block; }
 
 .cr-print-chart { width: 100%; max-width: 100%; border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px; }
+.cr-print-chart-note { font-size: 11.5px; color: var(--ink-faint); font-style: italic; margin-top: 6px; }
 
 .cr-print-text { font-size: 13px; color: var(--ink-soft); line-height: 1.7; white-space: pre-wrap; }
 
@@ -1827,6 +1842,14 @@ ul { list-style: none; }
   color: var(--ink-faint);
   font-size: 13.5px;
   padding: 60px 20px;
+}
+
+.chart-caption {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 12px;
+  font-style: italic;
+  padding: 6px 10px 0;
 }
 
 /* ==========================================================================

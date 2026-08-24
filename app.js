@@ -4403,21 +4403,41 @@
     const platformSel = document.getElementById('chartPlatformSelect');
     const canvas = document.getElementById('growthChartCanvas');
     const emptyEl = document.getElementById('chartEmpty');
+    const captionEl = document.getElementById('chartCaption');
     const metricKey = metricSel.value;
     const platformFilter = platformSel.value;
 
     const series = buildGrowthSeries(metricKey, { platform: platformFilter });
 
-    if (!series || series.labels.length === 0 || typeof window.Chart === 'undefined') {
+    const hideAll = () => {
       if (growthChart) { growthChart.destroy(); growthChart = null; }
       canvas.hidden = true;
       emptyEl.hidden = false;
+      if (captionEl) captionEl.hidden = true;
+    };
+
+    if (typeof window.Chart === 'undefined') {
+      hideAll();
+      emptyEl.textContent = 'No se pudo cargar la librería de gráficos (Chart.js) — revisa tu conexión a internet y recarga la página.';
+      return;
+    }
+    if (!series || series.labels.length === 0) {
+      hideAll();
+      emptyEl.textContent = 'Agrega al menos una entrada para ver la curva de crecimiento.';
       return;
     }
     canvas.hidden = false;
     emptyEl.hidden = true;
 
     growthChart = drawLineChart(canvas, series, `${series.col.label} — ${platformFilter || 'All Platforms'}`, growthChart);
+    if (captionEl) {
+      if (series.labels.length === 1) {
+        captionEl.hidden = false;
+        captionEl.textContent = 'Un solo corte cargado por ahora (un punto) — agrega más fechas para ver la tendencia.';
+      } else {
+        captionEl.hidden = true;
+      }
+    }
   }
 
   document.getElementById('chartMetricSelect').addEventListener('change', renderGrowthChart);
@@ -4474,15 +4494,35 @@
       periodEnd: '',
       markets: '',
       focusProducts: '',
+      objective: '',
       budgetConfirmed: '',
       budgetSpent: '',
-      channels: [{ id: uid('ch'), name: '', kpis: [{ id: uid('kpi'), label: '', value: '' }] }],
+      channels: [{ id: uid('ch'), name: '', kind: 'paid', kpis: [{ id: uid('kpi'), label: '', value: '' }] }],
       content: [],
       results: '',
+      observations: '',
       learnings: '',
+      nextSteps: '',
       chartMetric: '',
       chartPlatform: 'All Platforms',
     };
+  }
+
+  // Un canal es "comercio / atribución" (Amazon Attribution, Walmart…) si se
+  // marcó explícitamente al agregarlo, o — para reportes viejos que no
+  // tenían este campo — si su nombre lo delata. Así el PDF separa ventas
+  // atribuidas de métricas de entrega de pauta, que son cosas distintas.
+  function crChannelKind(ch) {
+    if (ch.kind === 'commerce' || ch.kind === 'paid') return ch.kind;
+    const n = (ch.name || '').toLowerCase();
+    return (n.includes('attribution') || n.includes('walmart') || n.includes('amazon')) ? 'commerce' : 'paid';
+  }
+
+  function crBudgetPct(s) {
+    const conf = parseFloat(s.budgetConfirmed);
+    const spent = parseFloat(s.budgetSpent);
+    if (!conf || isNaN(conf) || isNaN(spent)) return null;
+    return Math.round((spent / conf) * 100);
   }
 
   function crFormatDate(iso) {
@@ -4532,27 +4572,44 @@
   function renderCRBuilderChart() {
     const canvas = document.getElementById('crChartCanvas');
     const empty = document.getElementById('crChartEmpty');
+    const caption = document.getElementById('crChartCaption');
     if (!canvas || !crBuilderState) return;
     const s = crBuilderState;
     const series = s.chartMetric && s.name.trim() ? buildGrowthSeries(s.chartMetric, { platform: s.chartPlatform, campaign: s.name }) : null;
 
-    if (!s.name.trim()) {
+    const hideAll = () => {
       if (crChart) { crChart.destroy(); crChart = null; }
       canvas.hidden = true;
       empty.hidden = false;
+      if (caption) caption.hidden = true;
+    };
+
+    if (!s.name.trim()) {
+      hideAll();
       empty.textContent = 'Escribe el nombre de la campaña arriba — la curva busca en General las filas con ese mismo nombre.';
       return;
     }
-    if (!series || series.labels.length === 0 || typeof window.Chart === 'undefined') {
-      if (crChart) { crChart.destroy(); crChart = null; }
-      canvas.hidden = true;
-      empty.hidden = false;
+    if (typeof window.Chart === 'undefined') {
+      hideAll();
+      empty.textContent = 'No se pudo cargar la librería de gráficos (Chart.js) — revisa tu conexión a internet y recarga la página. Los datos siguen guardados, solo falta la librería para dibujar la curva.';
+      return;
+    }
+    if (!series || series.labels.length === 0) {
+      hideAll();
       empty.textContent = `No hay datos en General todavía con el nombre de campaña "${s.name.trim()}". Cárgalos ahí (tab General) y esta curva se arma sola.`;
       return;
     }
     canvas.hidden = false;
     empty.hidden = true;
     crChart = drawLineChart(canvas, series, `${series.col.label} — ${s.chartPlatform || 'All Platforms'}`, crChart);
+    if (caption) {
+      if (series.labels.length === 1) {
+        caption.hidden = false;
+        caption.textContent = 'Por ahora hay un solo corte cargado en General (un punto) — a medida que agregues más fechas de esta misma campaña ahí, la curva se arma sola.';
+      } else {
+        caption.hidden = true;
+      }
+    }
   }
 
   function crChannelHtml(ch) {
@@ -4635,6 +4692,10 @@
         <label class="field-label">Producto(s) foco</label>
         <input type="text" class="text-input" id="crFormFocusProducts" value="${escapeHtml(s.focusProducts)}" placeholder="SKU(s) hero de la campaña">
       </div>
+      <div class="field-group">
+        <label class="field-label">Objetivo de la campaña</label>
+        <input type="text" class="text-input" id="crFormObjective" value="${escapeHtml(s.objective)}" placeholder="Ej. Generar ventas atribuidas en Amazon durante el regreso a clases">
+      </div>
 
       <div class="af-builder-step-label">Presupuesto</div>
       <div class="brief-form-grid" style="grid-template-columns: repeat(2, 1fr);">
@@ -4647,14 +4708,20 @@
           <input type="text" class="text-input" id="crFormBudgetSpent" value="${escapeHtml(s.budgetSpent)}" placeholder="Ej. 980">
         </div>
       </div>
+      <div class="cr-budget-pct" id="crBudgetPctLine"></div>
 
-      <div class="af-builder-step-label">Canales</div>
-      <p class="af-builder-hint">Un canal por cada plataforma que corrió (Meta, TikTok, Pinterest, Amazon Attribution, Walmart…), con sus KPIs headline — los campos que necesite cada canal, libres.</p>
-      <div class="cr-channel-list">${s.channels.map(crChannelHtml).join('')}</div>
-      <button class="btn btn-ghost btn-small" id="crAddChannelBtn">+ Agregar Canal</button>
+      <div class="af-builder-step-label">Resultados por canal — Paid Media</div>
+      <p class="af-builder-hint">Meta, TikTok, Pinterest, Google Ads, LinkedIn… — métricas de entrega de pauta (alcance, impresiones, clics, spend). Un canal por plataforma, con los KPIs headline que apliquen.</p>
+      <div class="cr-channel-list">${s.channels.filter((c) => crChannelKind(c) === 'paid').map(crChannelHtml).join('') || '<p class="cr-print-empty">Sin canales de paid media todavía.</p>'}</div>
+      <button class="btn btn-ghost btn-small" data-cr-add-channel-kind="paid">+ Agregar Canal — Paid Media</button>
+
+      <div class="af-builder-step-label">Resultados de Comercio / Atribución</div>
+      <p class="af-builder-hint">Amazon Attribution, Walmart Connect… — el funnel de venta real (clicks, vistas de producto, add-to-cart, compras, ventas atribuidas). Esta es la parte que suele importar más: ventas.</p>
+      <div class="cr-channel-list cr-channel-list-commerce">${s.channels.filter((c) => crChannelKind(c) === 'commerce').map(crChannelHtml).join('') || '<p class="cr-print-empty">Sin canales de comercio/atribución todavía.</p>'}</div>
+      <button class="btn btn-ghost btn-small" data-cr-add-channel-kind="commerce">+ Agregar Canal — Comercio / Atribución</button>
 
       <div class="af-builder-step-label">Curva de crecimiento</div>
-      <p class="af-builder-hint">Se arma sola con lo ya cargado en General (tab de al lado) para filas con este mismo nombre de campaña.</p>
+      <p class="af-builder-hint">Se arma sola con lo ya cargado en General (tab de al lado) para filas con este mismo nombre de campaña — mientras más cortes de fecha cargues ahí, mejor se ve la tendencia.</p>
       <div class="chart-controls">
         <div class="chart-control">
           <label>Metric</label>
@@ -4669,18 +4736,26 @@
         <canvas id="crChartCanvas"></canvas>
       </div>
       <div class="chart-empty" id="crChartEmpty"></div>
+      <div class="chart-caption" id="crChartCaption" hidden></div>
 
-      <div class="af-builder-step-label">Contenido publicado</div>
-      <p class="af-builder-hint">Screenshots y/o links de los artes y videos que corrieron — o solo screenshots si no hay link.</p>
+      <div class="af-builder-step-label">Contenido publicado — screenshots</div>
+      <p class="af-builder-hint">Aquí subes las capturas de los anuncios, posts o videos que corrieron (JPG/PNG) — clic en el cuadro punteado de abajo para elegir el archivo. El link es opcional.</p>
       <div class="cr-content-grid">${s.content.map(crContentItemHtml).join('')}</div>
-      <button class="btn btn-ghost btn-small" id="crAddContentBtn">+ Agregar pieza</button>
+      <button class="btn btn-ghost btn-small" id="crAddContentBtn">+ Agregar screenshot / pieza</button>
 
-      <div class="af-builder-step-label">Resultados</div>
+      <div class="af-builder-step-label">Resultados y desempeño</div>
       <p class="af-builder-hint">Sin meta contra qué comparar todavía — por ahora es mostrar lo que dio la campaña; el próximo año ya se compara campaña a campaña.</p>
       <textarea class="text-area" id="crFormResults" rows="3" placeholder="Qué resultó la campaña, en libre…">${escapeHtml(s.results)}</textarea>
 
+      <div class="af-builder-step-label">Observaciones</div>
+      <p class="af-builder-hint">Notas del día a día — qué llamó la atención, qué se ajustó a mitad de campaña, contexto que no se ve solo en los números.</p>
+      <textarea class="text-area" id="crFormObservations" rows="3" placeholder="Ej. Instagram concentró el spend, Facebook casi no tuvo delivery…">${escapeHtml(s.observations)}</textarea>
+
       <div class="af-builder-step-label">Aprendizajes</div>
       <textarea class="text-area" id="crFormLearnings" rows="3" placeholder="Qué se ajusta para la siguiente campaña (opcional)…">${escapeHtml(s.learnings)}</textarea>
+
+      <div class="af-builder-step-label">Próximos pasos</div>
+      <textarea class="text-area" id="crFormNextSteps" rows="3" placeholder="Qué se hace con esto — ej. aplicar el mismo split de canal en Heritage Month…">${escapeHtml(s.nextSteps)}</textarea>
 
       <div class="af-builder-actions">
         <div>${s.editingId ? '<button class="btn btn-ghost" id="crBuilderDeleteBtn">Eliminar reporte</button>' : ''}</div>
@@ -4692,16 +4767,29 @@
     `;
 
     // ---- wiring: campos simples (sin re-render completo) ----
+    const updateBudgetPctLine = () => {
+      const line = document.getElementById('crBudgetPctLine');
+      if (!line) return;
+      const pct = crBudgetPct(s);
+      if (pct === null) { line.textContent = ''; return; }
+      line.textContent = `${pct}% del presupuesto confirmado gastado hasta ahora.`;
+      line.classList.toggle('cr-budget-pct-over', pct > 100);
+    };
+    updateBudgetPctLine();
+
     document.getElementById('crFormName').addEventListener('input', (e) => { s.name = e.target.value; });
     document.getElementById('crFormName').addEventListener('change', renderCRBuilderChart);
     document.getElementById('crFormMarkets').addEventListener('input', (e) => { s.markets = e.target.value; });
     document.getElementById('crFormPeriodStart').addEventListener('input', (e) => { s.periodStart = e.target.value; });
     document.getElementById('crFormPeriodEnd').addEventListener('input', (e) => { s.periodEnd = e.target.value; });
     document.getElementById('crFormFocusProducts').addEventListener('input', (e) => { s.focusProducts = e.target.value; });
-    document.getElementById('crFormBudgetConfirmed').addEventListener('input', (e) => { s.budgetConfirmed = e.target.value; });
-    document.getElementById('crFormBudgetSpent').addEventListener('input', (e) => { s.budgetSpent = e.target.value; });
+    document.getElementById('crFormObjective').addEventListener('input', (e) => { s.objective = e.target.value; });
+    document.getElementById('crFormBudgetConfirmed').addEventListener('input', (e) => { s.budgetConfirmed = e.target.value; updateBudgetPctLine(); });
+    document.getElementById('crFormBudgetSpent').addEventListener('input', (e) => { s.budgetSpent = e.target.value; updateBudgetPctLine(); });
     document.getElementById('crFormResults').addEventListener('input', (e) => { s.results = e.target.value; });
+    document.getElementById('crFormObservations').addEventListener('input', (e) => { s.observations = e.target.value; });
     document.getElementById('crFormLearnings').addEventListener('input', (e) => { s.learnings = e.target.value; });
+    document.getElementById('crFormNextSteps').addEventListener('input', (e) => { s.nextSteps = e.target.value; });
 
     // ---- canales ----
     body.querySelectorAll('[data-cr-channel-name]').forEach((el) => {
@@ -4743,10 +4831,12 @@
         renderCRBuilderChart();
       });
     });
-    document.getElementById('crAddChannelBtn').addEventListener('click', () => {
-      s.channels.push({ id: uid('ch'), name: '', kpis: [{ id: uid('kpi'), label: '', value: '' }] });
-      renderCRBuilderBody();
-      renderCRBuilderChart();
+    body.querySelectorAll('[data-cr-add-channel-kind]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        s.channels.push({ id: uid('ch'), name: '', kind: btn.dataset.crAddChannelKind, kpis: [{ id: uid('kpi'), label: '', value: '' }] });
+        renderCRBuilderBody();
+        renderCRBuilderChart();
+      });
     });
 
     // ---- contenido publicado ----
@@ -4803,8 +4893,17 @@
   }
 
   function openCRBuilder(existing) {
-    crBuilderState = existing ? JSON.parse(JSON.stringify(existing)) : freshCRState();
-    if (existing) crBuilderState.editingId = existing.id;
+    // Backfill sobre freshCRState() en vez de usar el existing tal cual —
+    // así un reporte guardado antes de que existieran campos como
+    // Objetivo/Observaciones/Próximos pasos (o el "kind" de canal) no
+    // rompe el builder ni el guardado al reabrirlo.
+    crBuilderState = existing ? Object.assign(freshCRState(), JSON.parse(JSON.stringify(existing))) : freshCRState();
+    if (existing) {
+      crBuilderState.editingId = existing.id;
+      crBuilderState.channels = (existing.channels && existing.channels.length)
+        ? existing.channels.map((ch) => ({ id: ch.id, name: ch.name || '', kind: crChannelKind(ch), kpis: (ch.kpis || []).map((k) => ({ id: k.id, label: k.label || '', value: k.value || '' })) }))
+        : freshCRState().channels;
+    }
     renderCRBuilderBody();
     document.getElementById('crBuilderOverlay').classList.add('active');
   }
@@ -4825,14 +4924,17 @@
       periodEnd: s.periodEnd,
       markets: s.markets.trim(),
       focusProducts: s.focusProducts.trim(),
+      objective: s.objective.trim(),
       budgetConfirmed: s.budgetConfirmed.trim(),
       budgetSpent: s.budgetSpent.trim(),
       channels: s.channels
-        .map((ch) => ({ id: ch.id, name: ch.name.trim(), kpis: ch.kpis.filter((k) => k.label.trim() || k.value.trim()) }))
+        .map((ch) => ({ id: ch.id, name: ch.name.trim(), kind: crChannelKind(ch), kpis: ch.kpis.filter((k) => k.label.trim() || k.value.trim()) }))
         .filter((ch) => ch.name),
       content: s.content,
       results: s.results.trim(),
+      observations: s.observations.trim(),
       learnings: s.learnings.trim(),
+      nextSteps: s.nextSteps.trim(),
       createdDate: s.editingId
         ? (campaignReports.find((r) => r.id === s.editingId) || {}).createdDate
         : new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
@@ -4891,6 +4993,16 @@
     return `<ul class="cr-print-kpi-list">${kpis.filter((k) => k.label.trim() || k.value.trim()).map((k) => `<li><b>${escapeHtml(k.label || '—')}:</b> ${escapeHtml(k.value || '—')}</li>`).join('')}</ul>`;
   }
 
+  // Los KPIs de comercio/atribución (compras, ventas, add-to-cart…) van como
+  // tarjetas grandes tipo "stat", no como lista — son el resultado que más
+  // le importa al negocio y se pierden si se ven igual que un KPI de pauta.
+  function crCommerceStatsHtml(kpis) {
+    const clean = (kpis || []).filter((k) => k.label.trim() || k.value.trim());
+    if (!clean.length) return `<p class="cr-print-empty">Sin KPIs cargados.</p>`;
+    return `<div class="cr-print-stat-row cr-print-stat-row-commerce">${clean.map((k) => `
+      <div class="cr-print-stat cr-print-stat-commerce"><span>${escapeHtml(k.label || '—')}</span><b>${escapeHtml(k.value || '—')}</b></div>`).join('')}</div>`;
+  }
+
   function exportCampaignReportPDF(report) {
     const area = document.getElementById('crPrintArea');
     if (!area) return;
@@ -4899,8 +5011,11 @@
     // primera métrica numérica disponible, filtrada por el nombre exacto
     // de esta campaña, para que el PDF no dependa de un canvas en pantalla.
     let chartImg = '';
+    let chartNote = '';
     const metricCol = crMetricOptions()[0];
-    if (metricCol && typeof window.Chart !== 'undefined') {
+    if (typeof window.Chart === 'undefined') {
+      chartNote = 'No se pudo generar la curva — Chart.js no cargó (revisa la conexión a internet) al momento de exportar.';
+    } else if (metricCol) {
       const series = buildGrowthSeries(metricCol.key, { campaign: report.name });
       if (series && series.labels.length) {
         const offCanvas = document.createElement('canvas');
@@ -4911,16 +5026,32 @@
         chartImg = offChart.toBase64Image();
         offChart.destroy();
         document.body.removeChild(offCanvas);
+        if (series.labels.length === 1) {
+          chartNote = 'Un solo corte cargado en General hasta ahora — la curva se arma con más fechas de esta misma campaña.';
+        }
+      } else {
+        chartNote = `Todavía no hay filas en General (tab General) con el nombre de campaña "${report.name}" — cárgalas ahí para que la curva se arme sola.`;
       }
     }
 
-    const channelsHtml = (report.channels || []).length
-      ? report.channels.map((ch) => `
+    const paidChannels = (report.channels || []).filter((c) => crChannelKind(c) === 'paid');
+    const commerceChannels = (report.channels || []).filter((c) => crChannelKind(c) === 'commerce');
+
+    const paidChannelsHtml = paidChannels.length
+      ? paidChannels.map((ch) => `
           <div class="cr-print-channel">
             <div class="cr-print-channel-name">${escapeHtml(ch.name)}</div>
             ${crKpiListHtml(ch.kpis)}
           </div>`).join('')
-      : `<p class="cr-print-empty">Sin canales cargados.</p>`;
+      : `<p class="cr-print-empty">Sin canales de paid media cargados.</p>`;
+
+    const commerceChannelsHtml = commerceChannels.length
+      ? commerceChannels.map((ch) => `
+          <div class="cr-print-channel cr-print-channel-commerce">
+            <div class="cr-print-channel-name">${escapeHtml(ch.name)}</div>
+            ${crCommerceStatsHtml(ch.kpis)}
+          </div>`).join('')
+      : `<p class="cr-print-empty">Sin canales de comercio/atribución cargados.</p>`;
 
     const contentHtml = (report.content || []).filter((c) => c.image || c.link || c.caption).length
       ? `<div class="cr-print-content-grid">${report.content.map((c) => {
@@ -4932,7 +5063,9 @@
               ${c.link ? `<div class="cr-print-content-link">${escapeHtml(c.link)}</div>` : ''}
             </div>`;
         }).join('')}</div>`
-      : `<p class="cr-print-empty">Sin contenido cargado.</p>`;
+      : `<p class="cr-print-empty">Sin contenido cargado todavía — se pueden agregar screenshots y links desde el botón "Editar" de este reporte.</p>`;
+
+    const pct = crBudgetPct(report);
 
     area.innerHTML = `
       <div class="cr-print-header">
@@ -4941,27 +5074,40 @@
         <div class="cr-print-sub">${crPeriodLabel(report)} · ${escapeHtml(report.markets || 'Mercado sin especificar')}${report.focusProducts ? ' · ' + escapeHtml(report.focusProducts) : ''}</div>
       </div>
 
+      ${report.objective ? `
+      <div class="cr-print-objective"><b>Objetivo:</b> ${escapeHtml(report.objective)}</div>` : ''}
+
       <div class="cr-print-stat-row">
         <div class="cr-print-stat"><span>Presupuesto confirmado</span><b>${escapeHtml(report.budgetConfirmed ? '$' + report.budgetConfirmed : '—')}</b></div>
         <div class="cr-print-stat"><span>Presupuesto gastado</span><b>${escapeHtml(report.budgetSpent ? '$' + report.budgetSpent : '—')}</b></div>
+        <div class="cr-print-stat"><span>% gastado</span><b>${pct === null ? '—' : pct + '%'}</b></div>
         <div class="cr-print-stat"><span>Canales</span><b>${(report.channels || []).length}</b></div>
       </div>
 
-      <div class="cr-print-section-label">Resultados por canal</div>
-      <div class="cr-print-channels">${channelsHtml}</div>
+      <div class="cr-print-section-label">Resultados por canal — Paid Media</div>
+      <div class="cr-print-channels">${paidChannelsHtml}</div>
 
-      ${chartImg ? `
+      <div class="cr-print-section-label cr-print-section-label-commerce">Resultados de Comercio / Atribución</div>
+      <div class="cr-print-channels">${commerceChannelsHtml}</div>
+
       <div class="cr-print-section-label">Curva de crecimiento</div>
-      <img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
+      ${chartImg ? `<img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
+      ${chartNote ? `<p class="cr-print-chart-note">${escapeHtml(chartNote)}</p>` : ''}
 
       <div class="cr-print-section-label">Contenido publicado</div>
       ${contentHtml}
 
-      <div class="cr-print-section-label">Resultados</div>
+      <div class="cr-print-section-label">Resultados y desempeño</div>
       <p class="cr-print-text">${escapeHtml(report.results || 'Sin registrar.')}</p>
+
+      <div class="cr-print-section-label">Observaciones</div>
+      <p class="cr-print-text">${escapeHtml(report.observations || 'Sin registrar.')}</p>
 
       <div class="cr-print-section-label">Aprendizajes</div>
       <p class="cr-print-text">${escapeHtml(report.learnings || 'Sin registrar.')}</p>
+
+      <div class="cr-print-section-label">Próximos pasos</div>
+      <p class="cr-print-text">${escapeHtml(report.nextSteps || 'Sin registrar.')}</p>
 
       <div class="cr-print-footer">Distrivalto · Digital Marketing · Reporte generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
     `;
