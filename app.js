@@ -2463,9 +2463,36 @@
       <div class="af-campaign-detail-section-label">Observaciones finales</div>
       <p class="af-campaign-detail-list">${escapeHtml(campaign.observations || 'Ninguna')}</p>
     `;
+    printAreaWhenReady(area);
+  }
+
+  // Espera a que todas las imágenes dentro del área imprimible terminen de
+  // decodificar antes de llamar a window.print(). Sin esto, si el área tiene
+  // <img> con src recién asignado (charts, creatividades en base64), el
+  // navegador puede paginar antes de que la imagen termine de cargar y deja
+  // una primera página en blanco seguida recién ahí del contenido real.
+  function printAreaWhenReady(area) {
     area.classList.add('printing');
-    window.print();
-    setTimeout(() => area.classList.remove('printing'), 500);
+    const imgs = Array.from(area.querySelectorAll('img'));
+    const waits = imgs.map((img) => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    });
+    // Carrera contra un tope de 3s — si alguna imagen nunca dispara load/error
+    // (conexión rara, src inválido) no se queda pegado sin imprimir nunca.
+    const allLoaded = Promise.all(waits);
+    const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
+    Promise.race([allLoaded, timeout]).then(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.print();
+          setTimeout(() => area.classList.remove('printing'), 500);
+        });
+      });
+    });
   }
 
   document.getElementById('afNewCampaignBtn').addEventListener('click', () => openCampaignBuilder(null));
@@ -4501,6 +4528,7 @@
       budgetConfirmed: '',
       budgetSpent: '',
       channels: [{ id: uid('ch'), name: '', kind: 'paid', kpis: [{ id: uid('kpi'), label: '', value: '' }] }],
+      demographics: { resultsKpis: [], reachKpis: [], notes: '' },
       content: [],
       results: '',
       observations: '',
@@ -4639,6 +4667,20 @@
       </div>`;
   }
 
+  // Filas de KPI para los dos paneles de demografía (Resultados / Alcance),
+  // igual de simples que las de un canal pero sin estar atadas a uno —
+  // reusan el mismo patrón visual (label + value + borrar).
+  function crDemoKpiRowHtml(listKey, k) {
+    return `
+      <div class="cr-kpi-row" data-cr-demo-kpi="${k.id}">
+        <input type="text" class="text-input" placeholder="Ej. Mujeres" data-cr-demo-field="label" data-cr-demo-list="${listKey}" data-cr-demo-kpi="${k.id}" value="${escapeHtml(k.label)}">
+        <input type="text" class="text-input" placeholder="Ej. 62% (1,302) · CPR $0.14" data-cr-demo-field="value" data-cr-demo-list="${listKey}" data-cr-demo-kpi="${k.id}" value="${escapeHtml(k.value)}">
+        <button class="icon-btn icon-btn-tiny" data-cr-demo-delete-kpi="${k.id}" data-cr-demo-list="${listKey}" title="Eliminar" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>`;
+  }
+
   function crContentItemHtml(it) {
     return `
       <div class="cr-content-card" data-cr-content="${it.id}">
@@ -4723,6 +4765,25 @@
       <p class="af-builder-hint">Amazon Attribution, Walmart Connect… — el funnel de venta real (clicks, vistas de producto, add-to-cart, compras, ventas atribuidas). Esta es la parte que suele importar más: ventas.</p>
       <div class="cr-channel-list cr-channel-list-commerce">${s.channels.filter((c) => crChannelKind(c) === 'commerce').map(crChannelHtml).join('') || '<p class="cr-print-empty">Sin canales de comercio/atribución todavía.</p>'}</div>
       <button class="btn btn-ghost btn-small" data-cr-add-channel-kind="commerce">+ Agregar Canal — Comercio / Atribución</button>
+
+      <div class="af-builder-step-label">Datos demográficos — edad y sexo</div>
+      <p class="af-builder-hint">De la pestaña "Datos demográficos" de Meta Ads Manager. Cargá el desglose por sexo tanto para Resultados (a quién le convirtió la pauta) como para Alcance (a quién le llegó) — suelen contar historias distintas.</p>
+      <div class="brief-form-grid" style="grid-template-columns: repeat(2, 1fr); gap: 16px;">
+        <div>
+          <div class="af-builder-hint" style="margin-top:0; font-weight:700; color: var(--navy);">Por Resultados</div>
+          <div class="cr-kpi-list">${s.demographics.resultsKpis.map((k) => crDemoKpiRowHtml('resultsKpis', k)).join('') || '<p class="cr-print-empty">Sin datos todavía.</p>'}</div>
+          <button class="btn btn-ghost btn-small" data-cr-demo-add="resultsKpis">+ Agregar</button>
+        </div>
+        <div>
+          <div class="af-builder-hint" style="margin-top:0; font-weight:700; color: var(--navy);">Por Alcance</div>
+          <div class="cr-kpi-list">${s.demographics.reachKpis.map((k) => crDemoKpiRowHtml('reachKpis', k)).join('') || '<p class="cr-print-empty">Sin datos todavía.</p>'}</div>
+          <button class="btn btn-ghost btn-small" data-cr-demo-add="reachKpis">+ Agregar</button>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:10px;">
+        <label class="field-label">Patrón por edad (opcional)</label>
+        <textarea class="text-area" id="crFormDemoNotes" rows="2" placeholder="Ej. En alcance, mujeres 65+ es el grupo más grande por lejos; en resultados la conversión crece con la edad en ambos sexos.">${escapeHtml(s.demographics.notes)}</textarea>
+      </div>
 
       <div class="af-builder-step-label">Curva de crecimiento</div>
       <p class="af-builder-hint">Se arma sola con lo ya cargado en General (tab de al lado) para filas con este mismo nombre de campaña — mientras más cortes de fecha cargues ahí, mejor se ve la tendencia.</p>
@@ -4848,6 +4909,31 @@
       });
     });
 
+    // ---- demografía (edad y sexo) ----
+    body.querySelectorAll('[data-cr-demo-field]').forEach((el) => {
+      el.addEventListener('input', (e) => {
+        const list = s.demographics[el.dataset.crDemoList];
+        const kpi = list && list.find((k) => k.id === el.dataset.crDemoKpi);
+        if (kpi) kpi[el.dataset.crDemoField] = e.target.value;
+      });
+    });
+    body.querySelectorAll('[data-cr-demo-add]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        s.demographics[btn.dataset.crDemoAdd].push({ id: uid('kpi'), label: '', value: '' });
+        renderCRBuilderBody();
+      });
+    });
+    body.querySelectorAll('[data-cr-demo-delete-kpi]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const list = s.demographics[btn.dataset.crDemoList];
+        if (!list) return;
+        s.demographics[btn.dataset.crDemoList] = list.filter((k) => k.id !== btn.dataset.crDemoDeleteKpi);
+        renderCRBuilderBody();
+      });
+    });
+    const demoNotesEl = document.getElementById('crFormDemoNotes');
+    if (demoNotesEl) demoNotesEl.addEventListener('input', (e) => { s.demographics.notes = e.target.value; });
+
     // ---- contenido publicado ----
     body.querySelectorAll('[data-cr-content-field]').forEach((el) => {
       el.addEventListener('input', (e) => {
@@ -4912,6 +4998,12 @@
       crBuilderState.channels = (existing.channels && existing.channels.length)
         ? existing.channels.map((ch) => ({ id: ch.id, name: ch.name || '', kind: crChannelKind(ch), kpis: (ch.kpis || []).map((k) => ({ id: k.id, label: k.label || '', value: k.value || '' })) }))
         : freshCRState().channels;
+      const d = existing.demographics || {};
+      crBuilderState.demographics = {
+        resultsKpis: (d.resultsKpis || []).map((k) => ({ id: k.id || uid('kpi'), label: k.label || '', value: k.value || '' })),
+        reachKpis: (d.reachKpis || []).map((k) => ({ id: k.id || uid('kpi'), label: k.label || '', value: k.value || '' })),
+        notes: d.notes || '',
+      };
     }
     renderCRBuilderBody();
     document.getElementById('crBuilderOverlay').classList.add('active');
@@ -4939,6 +5031,11 @@
       channels: s.channels
         .map((ch) => ({ id: ch.id, name: ch.name.trim(), kind: crChannelKind(ch), kpis: ch.kpis.filter((k) => k.label.trim() || k.value.trim()) }))
         .filter((ch) => ch.name),
+      demographics: {
+        resultsKpis: s.demographics.resultsKpis.filter((k) => k.label.trim() || k.value.trim()),
+        reachKpis: s.demographics.reachKpis.filter((k) => k.label.trim() || k.value.trim()),
+        notes: s.demographics.notes.trim(),
+      },
       content: s.content,
       results: s.results.trim(),
       observations: s.observations.trim(),
@@ -5075,6 +5172,22 @@
         }).join('')}</div>`
       : `<p class="cr-print-empty">Sin contenido cargado todavía — se pueden agregar screenshots y links desde el botón "Editar" de este reporte.</p>`;
 
+    const demo = report.demographics || { resultsKpis: [], reachKpis: [], notes: '' };
+    const hasDemo = (demo.resultsKpis && demo.resultsKpis.length) || (demo.reachKpis && demo.reachKpis.length) || demo.notes;
+    const demoHtml = hasDemo
+      ? `<div class="cr-print-demo-grid">
+          <div class="cr-print-channel">
+            <div class="cr-print-channel-name">Por Resultados</div>
+            ${crKpiListHtml(demo.resultsKpis)}
+          </div>
+          <div class="cr-print-channel">
+            <div class="cr-print-channel-name">Por Alcance</div>
+            ${crKpiListHtml(demo.reachKpis)}
+          </div>
+        </div>
+        ${demo.notes ? `<p class="cr-print-text cr-print-demo-notes">${escapeHtml(demo.notes)}</p>` : ''}`
+      : `<p class="cr-print-empty">Sin datos demográficos cargados.</p>`;
+
     const pct = crBudgetPct(report);
 
     area.innerHTML = `
@@ -5099,6 +5212,9 @@
 
       <div class="cr-print-section-label cr-print-section-label-commerce">Resultados de Comercio / Atribución</div>
       <div class="cr-print-channels">${commerceChannelsHtml}</div>
+
+      <div class="cr-print-section-label">Datos demográficos — edad y sexo</div>
+      ${demoHtml}
 
       ${report.methodology ? `
       <div class="cr-print-section-label">Metodología y limitaciones de medición</div>
@@ -5125,9 +5241,7 @@
 
       <div class="cr-print-footer">Distrivalto · Digital Marketing · Reporte generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
     `;
-    area.classList.add('printing');
-    window.print();
-    setTimeout(() => area.classList.remove('printing'), 500);
+    printAreaWhenReady(area);
   }
 
   document.getElementById('newCampaignReportBtn').addEventListener('click', () => openCRBuilder(null));
