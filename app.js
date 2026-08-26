@@ -4398,8 +4398,15 @@
     return { col, labels: dates, values };
   }
 
-  function drawLineChart(canvas, series, label, existingChart) {
+  function drawLineChart(canvas, series, label, existingChart, extraOptions) {
     if (existingChart) existingChart.destroy();
+    // extraOptions.animation === false se usa para el snapshot que exporta el
+    // PDF: toBase64Image() se llama justo despues del constructor, y con la
+    // animacion por defecto de Chart.js (~1s, via requestAnimationFrame) ese
+    // primer frame todavia no dibujo nada -- el resultado es una imagen en
+    // blanco (la curva "no se ve"). Desactivando la animacion, Chart.js dibuja
+    // de forma sincrona dentro del propio constructor y el snapshot sale bien.
+    const animation = extraOptions && extraOptions.animation === false ? false : undefined;
     return new window.Chart(canvas.getContext('2d'), {
       type: 'line',
       data: {
@@ -4419,6 +4426,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation,
         plugins: { legend: { display: true, labels: { color: '#4B5478', font: { family: 'Inter' } } } },
         scales: {
           x: { ticks: { color: '#8B93B8' }, grid: { display: false } },
@@ -5119,17 +5127,24 @@
     // de esta campaña, para que el PDF no dependa de un canvas en pantalla.
     let chartImg = '';
     let chartNote = '';
-    const metricCol = crMetricOptions()[0];
+    // Usa la misma metrica/plataforma que el usuario dejo elegida en el
+    // builder (report.chartMetric / report.chartPlatform) -- antes esto se
+    // ignoraba y el PDF siempre graficaba la primera columna numerica sin
+    // filtro de plataforma, que casi nunca era la curva que se veia en el
+    // preview del builder.
+    const metricOptions = crMetricOptions();
+    const metricCol = (report.chartMetric && metricOptions.find((c) => c.key === report.chartMetric)) || metricOptions[0];
+    const chartPlatform = report.chartPlatform || 'All Platforms';
     if (typeof window.Chart === 'undefined') {
       chartNote = 'No se pudo generar la curva — Chart.js no cargó (revisa la conexión a internet) al momento de exportar.';
     } else if (metricCol) {
-      const series = buildGrowthSeries(metricCol.key, { campaign: report.name });
+      const series = buildGrowthSeries(metricCol.key, { platform: chartPlatform, campaign: report.name });
       if (series && series.labels.length) {
         const offCanvas = document.createElement('canvas');
         offCanvas.width = 900; offCanvas.height = 320;
         offCanvas.style.position = 'fixed'; offCanvas.style.left = '-9999px';
         document.body.appendChild(offCanvas);
-        const offChart = drawLineChart(offCanvas, series, `${series.col.label}`, null);
+        const offChart = drawLineChart(offCanvas, series, `${series.col.label} — ${chartPlatform}`, null, { animation: false });
         chartImg = offChart.toBase64Image();
         offChart.destroy();
         document.body.removeChild(offCanvas);
@@ -5143,6 +5158,29 @@
 
     const paidChannels = (report.channels || []).filter((c) => crChannelKind(c) === 'paid');
     const commerceChannels = (report.channels || []).filter((c) => crChannelKind(c) === 'commerce');
+
+    // Resumen agregado de "Visitas a la página de destino" en Meta — se suma
+    // desde los KPIs de canal ya cargados (Facebook + Instagram) en vez de
+    // pedir el dato de nuevo, para que nunca quede desincronizado del detalle
+    // por canal de más abajo.
+    let metaLandingViews = 0;
+    paidChannels.forEach((ch) => {
+      (ch.kpis || []).forEach((k) => {
+        if (/visita.*landing|landing.*visita/i.test(k.label || '')) {
+          const n = parseFloat(String(k.value || '').replace(/[^0-9.]/g, ''));
+          if (!isNaN(n)) metaLandingViews += n;
+        }
+      });
+    });
+    const metaSpend = parseFloat(report.budgetSpent) || 0;
+    const metaCostPerVisit = metaLandingViews > 0 ? metaSpend / metaLandingViews : null;
+    const metaSummaryHtml = metaLandingViews > 0 ? `
+      <div class="cr-print-section-label">Resumen del rendimiento — Meta Ads (Facebook + Instagram)</div>
+      <div class="cr-print-stat-row">
+        <div class="cr-print-stat"><span>Visitas a la página de destino</span><b>${metaLandingViews.toLocaleString('es-ES')}</b></div>
+        <div class="cr-print-stat"><span>Por visita a la página de destino</span><b>${metaCostPerVisit !== null ? '$' + metaCostPerVisit.toFixed(2) : '—'}</b></div>
+        <div class="cr-print-stat"><span>Importe gastado</span><b>$${metaSpend.toFixed(2)}</b></div>
+      </div>` : '';
 
     const paidChannelsHtml = paidChannels.length
       ? paidChannels.map((ch) => `
@@ -5207,6 +5245,8 @@
         <div class="cr-print-stat"><span>Canales</span><b>${(report.channels || []).length}</b></div>
       </div>
 
+      ${metaSummaryHtml}
+
       <div class="cr-print-section-label">Resultados por canal — Paid Media</div>
       <div class="cr-print-channels">${paidChannelsHtml}</div>
 
@@ -5221,8 +5261,10 @@
       <p class="cr-print-text">${escapeHtml(report.methodology)}</p>` : ''}
 
       <div class="cr-print-section-label">Curva de crecimiento</div>
-      ${chartImg ? `<img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
-      ${chartNote ? `<p class="cr-print-chart-note">${escapeHtml(chartNote)}</p>` : ''}
+      <div class="cr-print-chart-wrap">
+        ${chartImg ? `<img class="cr-print-chart" src="${chartImg}" alt="Curva de crecimiento">` : ''}
+        ${chartNote ? `<p class="cr-print-chart-note">${escapeHtml(chartNote)}</p>` : ''}
+      </div>
 
       <div class="cr-print-section-label">Contenido publicado</div>
       ${contentHtml}
