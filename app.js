@@ -4540,7 +4540,7 @@
       budgetConfirmed: '',
       budgetSpent: '',
       channels: [{ id: uid('ch'), name: '', kind: 'paid', kpis: [{ id: uid('kpi'), label: '', value: '' }] }],
-      demographics: { resultsKpis: [], reachKpis: [], notes: '' },
+      demographics: { resultsKpis: [], reachKpis: [], notes: '', images: [] },
       content: [],
       results: '',
       observations: '',
@@ -4693,6 +4693,28 @@
       </div>`;
   }
 
+  // Grid de gráficos demográficos (age x gender de Meta Ads Manager u otra
+  // fuente) — mismo patrón visual que crContentItemHtml pero sin campo de
+  // link, porque acá lo que importa es la imagen del gráfico en sí.
+  function crDemoImageItemHtml(it) {
+    return `
+      <div class="cr-content-card" data-cr-demo-image="${it.id}">
+        <div class="cr-content-thumb">
+          ${it.image
+            ? `<img src="${it.image}" alt="">`
+            : `<label class="cr-content-upload">
+                <input type="file" accept="image/*" data-cr-demo-image-upload="${it.id}" hidden>
+                <svg viewBox="0 0 24 24"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+                <span>Subir gráfico</span>
+              </label>`}
+        </div>
+        <input type="text" class="text-input" placeholder="Caption — ej. Resultados por edad y sexo" data-cr-demo-image-field="caption" data-cr-demo-image="${it.id}" value="${escapeHtml(it.caption)}">
+        <button class="icon-btn" data-cr-delete-demo-image="${it.id}" title="Eliminar gráfico" aria-label="Eliminar gráfico">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>`;
+  }
+
   function crContentItemHtml(it) {
     return `
       <div class="cr-content-card" data-cr-content="${it.id}">
@@ -4795,6 +4817,12 @@
       <div class="field-group" style="margin-top:10px;">
         <label class="field-label">Patrón por edad (opcional)</label>
         <textarea class="text-area" id="crFormDemoNotes" rows="2" placeholder="Ej. En alcance, mujeres 65+ es el grupo más grande por lejos; en resultados la conversión crece con la edad en ambos sexos.">${escapeHtml(s.demographics.notes)}</textarea>
+      </div>
+      <div class="field-group" style="margin-top:10px;">
+        <label class="field-label">Gráficos de demografía (capturas de Meta Ads Manager)</label>
+        <p class="af-builder-hint">Sin la imagen del gráfico, el texto de arriba queda sin cómo demostrarse — sube acá la captura de la pestaña "Datos demográficos" para que el reporte muestre el gráfico, no solo lo describa.</p>
+        <div class="cr-content-grid">${s.demographics.images.map(crDemoImageItemHtml).join('')}</div>
+        <button class="btn btn-ghost btn-small" id="crAddDemoImageBtn">+ Agregar gráfico</button>
       </div>
 
       <div class="af-builder-step-label">Curva de crecimiento</div>
@@ -4946,6 +4974,39 @@
     const demoNotesEl = document.getElementById('crFormDemoNotes');
     if (demoNotesEl) demoNotesEl.addEventListener('input', (e) => { s.demographics.notes = e.target.value; });
 
+    // ---- gráficos de demografía ----
+    body.querySelectorAll('[data-cr-demo-image-field]').forEach((el) => {
+      el.addEventListener('input', (e) => {
+        const it = s.demographics.images.find((c) => c.id === el.dataset.crDemoImage);
+        if (it) it[el.dataset.crDemoImageField] = e.target.value;
+      });
+    });
+    body.querySelectorAll('[data-cr-delete-demo-image]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        s.demographics.images = s.demographics.images.filter((c) => c.id !== btn.dataset.crDeleteDemoImage);
+        renderCRBuilderBody();
+      });
+    });
+    body.querySelectorAll('[data-cr-demo-image-upload]').forEach((input) => {
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          const dataUrl = await crResizeImageFile(file);
+          const it = s.demographics.images.find((c) => c.id === input.dataset.crDemoImageUpload);
+          if (it) it.image = dataUrl;
+          renderCRBuilderBody();
+        } catch (err) {
+          alert('No se pudo cargar esa imagen. Prueba con otro archivo.');
+        }
+      });
+    });
+    const addDemoImageBtn = document.getElementById('crAddDemoImageBtn');
+    if (addDemoImageBtn) addDemoImageBtn.addEventListener('click', () => {
+      s.demographics.images.push({ id: uid('dimg'), image: '', caption: '' });
+      renderCRBuilderBody();
+    });
+
     // ---- contenido publicado ----
     body.querySelectorAll('[data-cr-content-field]').forEach((el) => {
       el.addEventListener('input', (e) => {
@@ -5015,6 +5076,7 @@
         resultsKpis: (d.resultsKpis || []).map((k) => ({ id: k.id || uid('kpi'), label: k.label || '', value: k.value || '' })),
         reachKpis: (d.reachKpis || []).map((k) => ({ id: k.id || uid('kpi'), label: k.label || '', value: k.value || '' })),
         notes: d.notes || '',
+        images: (d.images || []).map((it) => ({ id: it.id || uid('dimg'), image: it.image || '', caption: it.caption || '' })),
       };
     }
     renderCRBuilderBody();
@@ -5047,6 +5109,7 @@
         resultsKpis: s.demographics.resultsKpis.filter((k) => k.label.trim() || k.value.trim()),
         reachKpis: s.demographics.reachKpis.filter((k) => k.label.trim() || k.value.trim()),
         notes: s.demographics.notes.trim(),
+        images: s.demographics.images.filter((it) => it.image || it.caption.trim()),
       },
       content: s.content,
       results: s.results.trim(),
@@ -5214,8 +5277,16 @@
         }).join('')}</div>`
       : `<p class="cr-print-empty">Sin contenido cargado todavía — se pueden agregar screenshots y links desde el botón "Editar" de este reporte.</p>`;
 
-    const demo = report.demographics || { resultsKpis: [], reachKpis: [], notes: '' };
-    const hasDemo = (demo.resultsKpis && demo.resultsKpis.length) || (demo.reachKpis && demo.reachKpis.length) || demo.notes;
+    const demo = report.demographics || { resultsKpis: [], reachKpis: [], notes: '', images: [] };
+    const demoImages = (demo.images || []).filter((it) => it.image || it.caption);
+    const hasDemo = (demo.resultsKpis && demo.resultsKpis.length) || (demo.reachKpis && demo.reachKpis.length) || demo.notes || demoImages.length;
+    const demoImagesHtml = demoImages.length
+      ? `<div class="cr-print-content-grid cr-print-demo-images">${demoImages.map((it) => `
+          <div class="cr-print-content-item">
+            ${it.image ? `<img src="${it.image}" alt="">` : `<div class="cr-print-content-placeholder">Sin gráfico</div>`}
+            ${it.caption ? `<div class="cr-print-content-caption">${escapeHtml(it.caption)}</div>` : ''}
+          </div>`).join('')}</div>`
+      : '';
     const demoHtml = hasDemo
       ? `<div class="cr-print-demo-grid">
           <div class="cr-print-channel">
@@ -5227,6 +5298,7 @@
             ${crKpiListHtml(demo.reachKpis)}
           </div>
         </div>
+        ${demoImagesHtml}
         ${demo.notes ? `<p class="cr-print-text cr-print-demo-notes">${escapeHtml(demo.notes)}</p>` : ''}`
       : `<p class="cr-print-empty">Sin datos demográficos cargados.</p>`;
 

@@ -1092,6 +1092,7 @@ ul { list-style: none; }
 
 .cr-print-demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; break-inside: avoid; }
 .cr-print-demo-notes { font-style: italic; color: var(--ink-faint); margin-top: 8px; }
+.cr-print-demo-images { margin-top: 10px; }
 
 /* Grid de creatividades: se usa contain (no cover) + fondo neutro para que
    ninguna imagen se vea recortada, sin importar su relacion de aspecto real
