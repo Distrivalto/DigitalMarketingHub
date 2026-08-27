@@ -188,6 +188,7 @@
     { category: 'TikTok', activation: 'Video UGC / Influencer (Perfil del Creador)', formatOptions: ['Orgánico', 'Whitelisting'], format: 'Orgánico', measurement: 'Engagement, CTR' },
     { category: 'Paid Media', activation: 'Meta Ads (gestión de pauta)', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'CPM, CTR, ROAS' },
     { category: 'Paid Media', activation: 'Google Display / YouTube', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'Impressions, CTR' },
+    { category: 'Paid Media', activation: 'Google Ads (Search / SEM)', formatOptions: ['Pautado'], format: 'Pautado', measurement: 'Clics, CPC, Conversiones' },
     { category: 'Email / CRM', activation: 'Newsletter Feature (HubSpot, lista propia)', formatOptions: ['Orgánico'], format: 'Orgánico', measurement: 'Open rate, CTR, revenue' },
     { category: 'Gestión de Campaña', activation: 'Campaign Reporting & Optimization', formatOptions: ['N/A'], format: 'N/A', measurement: 'KPIs vs objetivo' },
   ].map((r) => ({ id: uid('afc'), ...r }));
@@ -278,7 +279,10 @@
       digital: [
         { activation: 'Short-form Video / Reel', format: 'Dark Post', note: 'video temático amplificado con pauta' },
         { activation: 'Post / Contenido Estático', format: 'Orgánico + Pauta', note: 'presencia constante durante la fecha' },
+        { activation: 'Video UGC / Influencer Content', format: 'Whitelisting', note: 'invitación activa a creadores para dar prueba social y alcance incremental durante la fecha' },
         { activation: 'Meta Ads (gestión de pauta)', format: 'Pautado', note: 'Awareness + Conversion durante la ventana de la campaña' },
+        { activation: 'Google Display / YouTube', format: 'Pautado', note: 'refuerza video y estáticos en awareness fuera de redes sociales' },
+        { activation: 'Google Ads (Search / SEM)', format: 'Pautado', note: 'captura búsqueda de alta intención durante la ventana de la campaña' },
       ],
       trade: [
         { activation: 'Material POP', note: 'ambienta el punto de venta para la fecha' },
