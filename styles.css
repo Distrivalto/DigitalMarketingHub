@@ -1058,37 +1058,51 @@ ul { list-style: none; }
 .cr-channel-list-commerce .cr-channel-card { background: #FFF9EE; border-color: rgba(232,169,61,0.3); }
 
 /* Área imprimible del Reporte de Campaña (PDF): oculta en pantalla, visible
-   solo al imprimir — ver @media print más abajo. */
-.cr-print-area { display: none; padding: 34px; }
+   solo al imprimir — ver @media print más abajo.
+   Rediseño (sep 2026): mismo lenguaje visual que la Presentación Ejecutiva
+   de Governance y los reportes consolidados (cards con sombra, kickers
+   numerados por CSS counter, franja de acento navy→blue). La numeración de
+   secciones es automática (counter-reset acá, counter-increment en cada
+   .cr-print-section-label) para que las secciones condicionales (Objetivo,
+   Metodología, resumen de Meta) nunca desordenen el conteo. */
+.cr-print-area { display: none; padding: 0 40px 44px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; counter-reset: cr-section; }
 
-.cr-print-header { border-bottom: 2px solid var(--navy); padding-bottom: 16px; margin-bottom: 20px; break-inside: avoid; break-after: avoid; }
-.cr-print-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue); margin-bottom: 6px; }
-.cr-print-title { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-.cr-print-sub { font-size: 13px; color: var(--ink-soft); }
+.cr-print-topbar { height: 6px; margin: 0 -40px 30px; background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 100%); }
 
-.cr-print-objective { font-size: 13px; color: var(--ink-soft); background: #F2F7FF; border-radius: 10px; padding: 10px 14px; margin-top: 14px; line-height: 1.55; break-inside: avoid; }
+.cr-print-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 22px; margin-bottom: 28px; border-bottom: 1px solid var(--line); break-inside: avoid; break-after: avoid; }
+.cr-print-header-main { min-width: 0; }
+.cr-print-kicker { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--navy); background: #EEF6FF; border: 1px solid var(--line); padding: 6px 13px 6px 11px; border-radius: 20px; margin-bottom: 16px; }
+.cr-print-kicker::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+.cr-print-title { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 10px; line-height: 1.12; }
+.cr-print-sub { font-size: 12.5px; color: var(--ink-soft); display: flex; gap: 8px; flex-wrap: wrap; }
+.cr-print-sub span { background: var(--line-soft); padding: 4px 11px; border-radius: 20px; font-weight: 600; }
+.cr-print-logo { height: 32px; width: auto; flex-shrink: 0; margin-bottom: 4px; }
+
+.cr-print-objective { font-size: 13.5px; color: var(--ink-soft); background: #F2F7FF; border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 14px 18px; margin-bottom: 28px; line-height: 1.6; break-inside: avoid; }
 .cr-print-objective b { color: var(--navy); }
 
-.cr-print-stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0 22px; break-inside: avoid; }
-.cr-print-stat { background: #F2F7FF; border-radius: 14px; padding: 12px 18px; min-width: 130px; break-inside: avoid; }
-.cr-print-stat b { display: block; font-size: 20px; color: var(--navy); }
-.cr-print-stat span { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+.cr-print-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 0 0 34px; break-inside: avoid; }
+.cr-print-stat { background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow-sm); border-radius: var(--radius-md); padding: 16px 18px; break-inside: avoid; }
+.cr-print-stat span { display: block; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 9px; }
+.cr-print-stat b { display: block; font-size: 25px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
 
 .cr-print-stat-row-commerce { margin: 0; }
-.cr-print-stat-commerce { background: var(--amber-bg); }
+.cr-print-stat-commerce { background: linear-gradient(160deg, #FFFBF2 0%, var(--amber-bg) 100%); border-color: rgba(232,169,61,0.35); }
 .cr-print-stat-commerce b { color: var(--amber); }
 
-.cr-print-section-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blue); margin: 24px 0 10px; padding-top: 14px; border-top: 1px solid var(--line-soft); break-after: avoid; break-inside: avoid; }
-.cr-print-section-label:first-of-type { border-top: none; padding-top: 0; }
-.cr-print-section-label-commerce { color: var(--amber); }
+.cr-print-section-label { display: flex; align-items: center; gap: 11px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink); margin: 38px 0 16px; break-after: avoid; break-inside: avoid; counter-increment: cr-section; }
+.cr-print-section-label:first-of-type { margin-top: 0; }
+.cr-print-section-label::before { content: counter(cr-section); flex-shrink: 0; width: 23px; height: 23px; border-radius: 50%; background: var(--navy); color: var(--white); font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.cr-print-section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.cr-print-section-label-commerce::before { background: var(--amber); }
 
 .cr-print-channels { display: flex; flex-direction: column; gap: 12px; }
-.cr-print-channel { background: #FAFCFF; border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px 16px; break-inside: avoid; }
-.cr-print-channel-commerce { background: #FFFBF2; border-color: rgba(232,169,61,0.35); }
-.cr-print-channel-name { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-.cr-print-kpi-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
-.cr-print-kpi-list li { font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line-soft); padding-bottom: 4px; }
-.cr-print-kpi-list b { color: var(--navy); }
+.cr-print-channel { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-sm); break-inside: avoid; }
+.cr-print-channel-commerce { border-left-color: var(--amber); }
+.cr-print-channel-name { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.cr-print-kpi-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 18px; margin: 0; padding: 0; list-style: none; }
+.cr-print-kpi-list li { font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+.cr-print-kpi-list b { color: var(--navy); font-weight: 700; }
 
 .cr-print-demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; break-inside: avoid; }
 .cr-print-demo-notes { font-style: italic; color: var(--ink-faint); margin-top: 8px; }
@@ -1097,20 +1111,20 @@ ul { list-style: none; }
 /* Grid de creatividades: se usa contain (no cover) + fondo neutro para que
    ninguna imagen se vea recortada, sin importar su relacion de aspecto real
    (posts cuadrados, historias/reels verticales, etc.) */
-.cr-print-content-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.cr-print-content-item { border: 1px solid var(--line-soft); border-radius: 10px; overflow: hidden; break-inside: avoid; background: var(--white); }
-.cr-print-content-item img { width: 100%; height: 165px; object-fit: contain; object-position: center; display: block; background: #F4F6FB; }
-.cr-print-content-placeholder { width: 100%; height: 165px; background: var(--line-soft); display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 11px; }
-.cr-print-content-caption { font-size: 11.5px; color: var(--ink-soft); padding: 6px 8px 2px; }
-.cr-print-content-link { font-size: 10.5px; color: var(--blue-soft); padding: 0 8px 8px; word-break: break-all; display: block; }
+.cr-print-content-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cr-print-content-item { border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; break-inside: avoid; background: var(--white); box-shadow: var(--shadow-sm); }
+.cr-print-content-item img { width: 100%; height: 170px; object-fit: contain; object-position: center; display: block; background: #F4F6FB; }
+.cr-print-content-placeholder { width: 100%; height: 170px; background: var(--line-soft); display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 11px; }
+.cr-print-content-caption { font-size: 11.5px; color: var(--ink-soft); padding: 8px 10px 2px; font-weight: 600; }
+.cr-print-content-link { font-size: 10.5px; color: var(--blue); padding: 0 10px 10px; word-break: break-all; display: block; }
 
 .cr-print-chart-wrap { break-inside: avoid; }
-.cr-print-chart { width: 100%; max-width: 100%; border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px; display: block; }
-.cr-print-chart-note { font-size: 11.5px; color: var(--ink-faint); font-style: italic; margin-top: 6px; }
+.cr-print-chart { width: 100%; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 14px; display: block; box-shadow: var(--shadow-sm); background: var(--white); }
+.cr-print-chart-note { font-size: 11.5px; color: var(--ink-faint); font-style: italic; margin-top: 8px; }
 
-.cr-print-text { font-size: 13px; color: var(--ink-soft); line-height: 1.7; white-space: pre-wrap; break-inside: avoid; }
+.cr-print-text { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; white-space: pre-wrap; break-inside: avoid; background: #FAFCFF; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); padding: 15px 19px; }
 
-.cr-print-footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 10.5px; color: var(--ink-faint); text-align: center; break-inside: avoid; }
+.cr-print-footer { margin-top: 42px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink-faint); display: flex; justify-content: space-between; align-items: center; break-inside: avoid; }
 
 .cr-print-empty { font-size: 12.5px; color: var(--ink-faint); font-style: italic; }
 
@@ -1966,6 +1980,13 @@ ul { list-style: none; }
   .cr-print-area { display: none; }
   .cr-print-area.printing { display: block !important; }
   body { background: white; margin: 0; }
+
+  /* Sin esto, Chrome descarta por default los fondos/colores de las cards,
+     chips y la franja de acento del reporte de campaña al imprimir/guardar
+     como PDF -- el resultado se ve "plano" aunque el CSS de arriba sea
+     correcto. Shadows no imprimen (Chrome las ignora en @media print de
+     todas formas) pero los fondos y gradientes si necesitan esto. */
+  .cr-print-area, .cr-print-area * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
 
 /* ==========================================================================

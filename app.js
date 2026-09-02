@@ -4583,9 +4583,15 @@
     return crFormatDate(report.periodStart || report.periodEnd);
   }
 
-  // Convierte un screenshot subido a JPEG redimensionado (máx 1100px de
-  // ancho) antes de guardarlo como base64 — para no inflar el registro con
-  // fotos de cámara de varios MB cada una.
+  // Convierte un screenshot subido a JPEG redimensionado (máx 900px de
+  // ancho, calidad 0.75) antes de usarlo — bajado de 1100px/0.82 (27 ago)
+  // porque a ese tamaño 9 imágenes en un solo reporte ya pesaban ~1MB en
+  // base64 y hacían que el SQL de carga masiva chocara con el tope del
+  // SQL Editor de Supabase ("Query is too large..."). A 900px/0.75 se ve
+  // igual de bien en el reporte (las celdas de la galería miden 165px de
+  // alto) y pesa bastante menos desde el origen. Devuelve tanto el Blob
+  // (para subir a Storage) como el data URL (fallback si Storage no
+  // está disponible).
   function crResizeImageFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -4594,18 +4600,45 @@
         const img = new Image();
         img.onerror = () => reject(new Error('No se pudo leer la imagen.'));
         img.onload = () => {
-          const maxWidth = 1100;
+          const maxWidth = 900;
           const scale = Math.min(1, maxWidth / img.width);
           const canvas = document.createElement('canvas');
           canvas.width = Math.max(1, Math.round(img.width * scale));
           canvas.height = Math.max(1, Math.round(img.height * scale));
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.82));
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          canvas.toBlob((blob) => {
+            resolve({ blob, dataUrl });
+          }, 'image/jpeg', 0.75);
         };
         img.src = reader.result;
       };
       reader.readAsDataURL(file);
+    });
+  }
+
+  // Sube la imagen ya redimensionada a Supabase Storage (bucket
+  // 'campaign-report-images') y devuelve el link público — así el
+  // reporte guarda unos pocos caracteres (el link) en vez del archivo
+  // completo en base64, que era lo que hacía crecer sin límite el SQL
+  // de reportes cada vez que se cargaba una campaña con screenshots.
+  // Si Storage no responde (bucket todavía no creado, sin conexión,
+  // etc.) cae de vuelta al data URL local — no rompe la función
+  // mientras tanto, solo pierde el ahorro de espacio para esa imagen.
+  function crStoreImage(file, folder, id) {
+    return crResizeImageFile(file).then(({ blob, dataUrl }) => {
+      const sb = window.__hubSupabase;
+      if (!sb || !sb.storage || !blob) return dataUrl;
+      const path = `${folder}/${id}.jpg`;
+      return sb.storage.from('campaign-report-images')
+        .upload(path, blob, { contentType: 'image/jpeg', upsert: true })
+        .then(({ error }) => {
+          if (error) { console.warn('No se pudo subir a Storage, uso data URL local:', error); return dataUrl; }
+          const { data } = sb.storage.from('campaign-report-images').getPublicUrl(path);
+          return (data && data.publicUrl) ? data.publicUrl : dataUrl;
+        })
+        .catch((err) => { console.warn('No se pudo subir a Storage, uso data URL local:', err); return dataUrl; });
     });
   }
 
@@ -4992,9 +5025,9 @@
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         try {
-          const dataUrl = await crResizeImageFile(file);
+          const url = await crStoreImage(file, 'demographics', input.dataset.crDemoImageUpload);
           const it = s.demographics.images.find((c) => c.id === input.dataset.crDemoImageUpload);
-          if (it) it.image = dataUrl;
+          if (it) it.image = url;
           renderCRBuilderBody();
         } catch (err) {
           alert('No se pudo cargar esa imagen. Prueba con otro archivo.');
@@ -5026,9 +5059,9 @@
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         try {
-          const dataUrl = await crResizeImageFile(file);
+          const url = await crStoreImage(file, 'content', input.dataset.crContentUpload);
           const it = s.content.find((c) => c.id === input.dataset.crContentUpload);
-          if (it) it.image = dataUrl;
+          if (it) it.image = url;
           renderCRBuilderBody();
           renderCRBuilderChart();
         } catch (err) {
@@ -5304,11 +5337,23 @@
 
     const pct = crBudgetPct(report);
 
+    // Chips de metadatos del header: periodo siempre presente, mercado y
+    // producto foco son opcionales -- se arman por separado (en vez de un
+    // solo string con "·") para que cada uno sea su propio chip visual.
+    const subChips = [crPeriodLabel(report), report.markets || 'Mercado sin especificar', report.focusProducts || '']
+      .filter(Boolean)
+      .map((s) => `<span>${escapeHtml(s)}</span>`)
+      .join('');
+
     area.innerHTML = `
+      <div class="cr-print-topbar"></div>
       <div class="cr-print-header">
-        <div class="cr-print-kicker">REPORTE DE CAMPAÑA · DIGITAL MARKETING</div>
-        <div class="cr-print-title">${escapeHtml(report.name)}</div>
-        <div class="cr-print-sub">${crPeriodLabel(report)} · ${escapeHtml(report.markets || 'Mercado sin especificar')}${report.focusProducts ? ' · ' + escapeHtml(report.focusProducts) : ''}</div>
+        <div class="cr-print-header-main">
+          <div class="cr-print-kicker">Reporte de campaña · Digital Marketing</div>
+          <div class="cr-print-title">${escapeHtml(report.name)}</div>
+          <div class="cr-print-sub">${subChips}</div>
+        </div>
+        <img class="cr-print-logo" src="assets/distrivalto-logo.png" alt="Distrivalto">
       </div>
 
       ${report.objective ? `
@@ -5357,7 +5402,7 @@
       <div class="cr-print-section-label">Próximos pasos</div>
       <p class="cr-print-text">${escapeHtml(report.nextSteps || 'Sin registrar.')}</p>
 
-      <div class="cr-print-footer">Distrivalto · Digital Marketing · Reporte generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+      <div class="cr-print-footer"><span>Distrivalto · Digital Marketing</span><span>Reporte generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</span></div>
     `;
     printAreaWhenReady(area);
   }
