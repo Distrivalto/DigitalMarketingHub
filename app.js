@@ -1098,6 +1098,38 @@
     { id: calId('2026-08-26', 'LinkedIn', 1), date: '2026-08-26', platform: 'LinkedIn', brand: 'Distrivalto', market: 'Cuentas globales', campaign: 'LinkedIn B2B 2026', kind: 'Orgánico', topic: 'Diego — Por qué elegimos Shopify para las 4 marcas', notes: 'Banco de Temas #1' },
     { id: calId('2026-08-27', 'Instagram', 1), date: '2026-08-27', platform: 'Instagram', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Genérico', kind: 'Orgánico', topic: 'Holstein ya está en República Dominicana (reuso de asset + caption local)', notes: '' },
     { id: calId('2026-08-28', 'LinkedIn', 1), date: '2026-08-28', platform: 'LinkedIn', brand: 'Distrivalto', market: 'Cuentas globales', campaign: 'LinkedIn B2B 2026', kind: 'Orgánico', topic: 'Distrivalto — Mid Year Conference', notes: 'Banco de Temas #1, pendiente fotos del evento' },
+
+    // ---- Labor Day 2026 (Holstein, Walmart) ----
+    { id: calId('2026-09-04', 'Facebook', 1), date: '2026-09-04', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Labor Day 2026', kind: 'Orgánico', topic: 'Labor Day Savings de Walmart', notes: '' },
+    { id: calId('2026-09-04', 'Instagram', 1), date: '2026-09-04', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Labor Day 2026', kind: 'Orgánico', topic: 'Labor Day Savings de Walmart', notes: '' },
+    { id: calId('2026-09-06', 'Facebook', 1), date: '2026-09-06', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Labor Day 2026', kind: 'Orgánico', topic: 'Labor Day Recipe', notes: '' },
+    { id: calId('2026-09-06', 'Instagram', 1), date: '2026-09-06', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Labor Day 2026', kind: 'Orgánico', topic: 'Labor Day Recipe', notes: '' },
+
+    // ---- Hispanic Heritage Month 2026 (Holstein, Arepa Maker) — siembra de septiembre ----
+    { id: calId('2026-09-08', 'Facebook', 1), date: '2026-09-08', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Heritage KV General', notes: '' },
+    { id: calId('2026-09-08', 'Instagram', 1), date: '2026-09-08', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Heritage KV General', notes: '' },
+    { id: calId('2026-09-09', 'Facebook', 1), date: '2026-09-09', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Carrusel CTA Amazon (inglés)', notes: '' },
+    { id: calId('2026-09-09', 'Instagram', 1), date: '2026-09-09', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Carrusel CTA Amazon (inglés)', notes: '' },
+    { id: calId('2026-09-09', 'Facebook', 2), date: '2026-09-09', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Carrusel CTA Walmart (inglés)', notes: '' },
+    { id: calId('2026-09-09', 'Instagram', 2), date: '2026-09-09', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Carrusel CTA Walmart (inglés)', notes: '' },
+    { id: calId('2026-09-09', 'Facebook', 3), date: '2026-09-09', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Dark Post', topic: 'Carrusel CTA Amazon (español)', notes: '' },
+    { id: calId('2026-09-09', 'Instagram', 3), date: '2026-09-09', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Dark Post', topic: 'Carrusel CTA Amazon (español)', notes: '' },
+    { id: calId('2026-09-09', 'Facebook', 4), date: '2026-09-09', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Dark Post', topic: 'Carrusel CTA Walmart (español)', notes: '' },
+    { id: calId('2026-09-09', 'Instagram', 4), date: '2026-09-09', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Dark Post', topic: 'Carrusel CTA Walmart (español)', notes: '' },
+    { id: calId('2026-09-12', 'Facebook', 1), date: '2026-09-12', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Arepa Recipe (World Arepa Day)', notes: '' },
+    { id: calId('2026-09-12', 'Instagram', 1), date: '2026-09-12', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Arepa Recipe (World Arepa Day)', notes: '' },
+    { id: calId('2026-09-14', 'Facebook', 1), date: '2026-09-14', platform: 'Facebook', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Video con CTA Amazon', notes: 'Fecha propuesta — cerca del Arepa Day (12) para no perder continuidad del flight de paid media. Confirmar.' },
+    { id: calId('2026-09-14', 'Instagram', 1), date: '2026-09-14', platform: 'Instagram', brand: 'Holstein Housewares', market: 'USA', campaign: 'Hispanic Heritage Month 2026', kind: 'Pautado', topic: 'Video con CTA Amazon', notes: 'Fecha propuesta — cerca del Arepa Day (12) para no perder continuidad del flight de paid media. Confirmar.' },
+
+    // ---- Día WOW 2026 (CCN Casa Cuesta, República Dominicana) ----
+    { id: calId('2026-09-04', 'Facebook', 2), date: '2026-09-04', platform: 'Facebook', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — post 1', notes: '' },
+    { id: calId('2026-09-04', 'Instagram', 2), date: '2026-09-04', platform: 'Instagram', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — post 2', notes: '' },
+    { id: calId('2026-09-05', 'Facebook', 1), date: '2026-09-05', platform: 'Facebook', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — video 1', notes: '' },
+    { id: calId('2026-09-05', 'Instagram', 1), date: '2026-09-05', platform: 'Instagram', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — video 1', notes: '' },
+    { id: calId('2026-09-08', 'Facebook', 2), date: '2026-09-08', platform: 'Facebook', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — video 2', notes: '' },
+    { id: calId('2026-09-08', 'Instagram', 2), date: '2026-09-08', platform: 'Instagram', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'Día WOW — video 2', notes: '' },
+    { id: calId('2026-09-10', 'Facebook', 1), date: '2026-09-10', platform: 'Facebook', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'CTA compra, 25% descuento Día WOW', notes: '' },
+    { id: calId('2026-09-10', 'Instagram', 1), date: '2026-09-10', platform: 'Instagram', brand: 'Holstein Housewares', market: 'República Dominicana', campaign: 'Día WOW 2026', kind: 'Dark Post', topic: 'CTA compra, 25% descuento Día WOW', notes: '' },
   ];
   DEFAULT_CALENDAR_POSTS.forEach((p) => { if (p.posted === undefined) p.posted = false; });
 
