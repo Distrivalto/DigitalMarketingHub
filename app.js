@@ -998,7 +998,160 @@
         },
       ],
     },
+    {
+      id: 'proj_diawow_ccn',
+      name: 'Día WOW CCN (Casa Cuesta, RD)',
+      tags: ['CCN RD', 'KR2'],
+      description: 'Piloto #3 de KR2 para Holstein en República Dominicana: campaña 100% digital con Casa Cuesta, pauta propia en Meta Ads corriendo en paralelo a un Media Kit pagado en el ecommerce del retailer.',
+      objective: 'Generar tráfico calificado hacia la landing de Casa Cuesta combinando Meta Ads con presencia paga en el Media Kit del retailer, y medir el resultado contra el baseline de mercado hogar/LATAM.',
+      result: 'Campaña ejecutada del 4 al 10 de septiembre, $3,699.18 de $3,700 aprobado (99.9%). Meta Ads: 424K reach, 15.5K visitas a destino a $0.052 CPR, CTR 2.76%. Vs. baseline hogar/LATAM: CTR, CPC, CPM y CPR por encima del mercado. SellOut real de CCN pendiente de entrega del retailer.',
+      deliverable: 'Propuesta (docx) + reporte visual completo (HTML) + entrada real en Budget Tracker y Campaign Tracker del HUB.',
+      tasks: [
+        { id: uid('pt'), title: 'Propuesta y aprobación', done: true, subtasks: [
+          { id: uid('pst'), title: 'Propuesta docx entregada y aprobada', done: true },
+          { id: uid('pst'), title: 'Presupuesto confirmado, $3,700 (Meta $800 + Media Kit $2,900)', done: true },
+        ] },
+        { id: uid('pt'), title: 'Ejecución', done: true, subtasks: [
+          { id: uid('pst'), title: 'Meta Ads: Expectativa 4-9 sep + Activación 10 sep', done: true },
+          { id: uid('pst'), title: 'Media Kit: banner Electro Cocina + Freidoras + posicionamiento subcategoría', done: true },
+        ] },
+        { id: uid('pt'), title: 'Cierre y reporte', done: true, subtasks: [
+          { id: uid('pst'), title: 'Reporte visual HTML con comparación vs. baseline de mercado', done: true },
+          { id: uid('pst'), title: 'Cargado en Budget Tracker y Campaign Tracker del HUB', done: true },
+        ] },
+        { id: uid('pt'), title: 'Pendiente', done: false, subtasks: [
+          { id: uid('pst'), title: 'SellOut real de Casa Cuesta — solicitado, en espera del retailer', done: false },
+        ] },
+      ],
+    },
+    {
+      id: 'proj_patatus_rd',
+      name: 'RD Jumbo (Patatus) — Luperón y Megacentro',
+      tags: ['CCN RD'],
+      description: 'Activación digital con Jumbo (Grupo CCN) en dos tiendas de Santo Domingo — Luperón y Megacentro — vía Meta Ads, parte del piloto de canal propio en RD junto a Casa Cuesta.',
+      objective: 'Generar alcance y engagement local para cada activación en tienda, con budget lean de Meta Ads por ubicación.',
+      result: 'Luperón: post de invitación publicado 20-21 sep, $150 de $150 ejecutado (100%). Megacentro: activación lanzada 22 sep on-time, $150 de $150 ejecutado (100%), corrió hasta el 27 sep.',
+      deliverable: 'Propuesta docx + 2 activaciones de Meta Ads + entrada real en Budget Tracker y Campaign Tracker del HUB.',
+      tasks: [
+        { id: uid('pt'), title: 'Propuesta y aprobación', done: true, subtasks: [
+          { id: uid('pst'), title: 'Propuesta docx Patatus entregada y aprobada', done: true },
+          { id: uid('pst'), title: 'Presupuesto combinado $300 confirmado ($150 por ubicación)', done: true },
+        ] },
+        { id: uid('pt'), title: 'Luperón', done: true, subtasks: [
+          { id: uid('pst'), title: 'Post de invitación publicado 20-21 sep', done: true },
+          { id: uid('pst'), title: '$150 ejecutado (100%)', done: true },
+        ] },
+        { id: uid('pt'), title: 'Megacentro', done: true, subtasks: [
+          { id: uid('pst'), title: 'Activación lanzada 22 sep, on-time', done: true },
+          { id: uid('pst'), title: 'Cerró 27 sep, $150 ejecutado (100%)', done: true },
+        ] },
+        { id: uid('pt'), title: 'Cierre', done: false, subtasks: [
+          { id: uid('pst'), title: 'Resultado de alcance/engagement pendiente para cerrar medición', done: false },
+        ] },
+      ],
+    },
+    {
+      id: 'proj_falabella_co',
+      name: 'Falabella Aniversario CO',
+      tags: ['KR2'],
+      description: 'Campaña de Aniversario de Falabella en Colombia para Holstein — Sponsored Products + Banner/Media Kit en el ecommerce del retailer, más Meta Ads en paralelo, corriendo hasta el 16 de octubre.',
+      objective: 'Aprovechar la ventana de Aniversario Falabella para generar ventas atribuidas vía Sponsored Products y visibilidad paga dentro del sitio del retailer.',
+      result: 'Arrancó 18 sep. Sponsored Products: ROAS 15.6x, CTR 3.14%, 63,677 impresiones, ventas directas $4,302.23 (56) + indirectas $1,220.57 (16). Banner/Media Kit aún no activo (seguimiento con Falabella). Budget total aprobado $4,000 (Media Kit $3,000 incl. IVA + Meta $1,000), $853.31 ejecutado a la fecha — reporte preliminar, Aniversario completo corre hasta el 16 de octubre.',
+      deliverable: 'Propuesta docx + entrada real en Budget Tracker y Campaign Tracker del HUB.',
+      tasks: [
+        { id: uid('pt'), title: 'Propuesta y aprobación', done: true, subtasks: [
+          { id: uid('pst'), title: 'Plan Holstein Aniversario recibido de Falabella', done: true },
+          { id: uid('pst'), title: 'Presupuesto $4,000 aprobado', done: true },
+        ] },
+        { id: uid('pt'), title: 'Sponsored Products', done: true, subtasks: [
+          { id: uid('pst'), title: 'Activo desde el 18 sep', done: true },
+          { id: uid('pst'), title: 'ROAS 15.6x confirmado', done: true },
+        ] },
+        { id: uid('pt'), title: 'Banner / Media Kit', done: false, subtasks: [
+          { id: uid('pst'), title: 'Aún no activo — seguimiento por correo con Falabella', done: false },
+        ] },
+        { id: uid('pt'), title: 'Cierre', done: false, subtasks: [
+          { id: uid('pst'), title: 'Reporte final tras el cierre del Aniversario, 16 oct', done: false },
+        ] },
+      ],
+    },
+    {
+      id: 'proj_hhm_usa',
+      name: 'Hispanic Heritage Month USA',
+      tags: ['KR2'],
+      description: 'Campaña piloto de KR2 en Ecommerce USA (Amazon + Walmart) para el mes de la Herencia Hispana, con Meta, Pinterest y TikTok corriendo en fases.',
+      objective: 'Generar reach, engagement y tráfico hacia las tiendas de marca en Amazon y Walmart durante la ventana de Hispanic Heritage Month.',
+      result: 'Go-live real 6 sep (antes del 15 sep planeado). Primera fase activa: Meta $500 + Pinterest $100 + TikTok $500 = $1,100 de los $3,101 aprobados. TikTok activado 23 sep (6 UGC + 3 perfil, OK Creative). Cierra 15 oct — post-report final recién en Q4.',
+      deliverable: 'Estrategia + entrada real en Budget Tracker y Campaign Tracker del HUB.',
+      tasks: [
+        { id: uid('pt'), title: 'Estrategia y presupuesto', done: true, subtasks: [
+          { id: uid('pst'), title: 'Estrategia digital Hispanic Heritage Month aprobada', done: true },
+          { id: uid('pst'), title: 'Presupuesto total $3,101 confirmado', done: true },
+        ] },
+        { id: uid('pt'), title: 'Fase 1 — Meta y Pinterest', done: true, subtasks: [
+          { id: uid('pst'), title: 'Activados 6 sep, $600 de budget fase 1', done: true },
+        ] },
+        { id: uid('pt'), title: 'Fase 1 — TikTok', done: true, subtasks: [
+          { id: uid('pst'), title: 'Activado 23 sep, 6 videos UGC + 3 en perfil, OK Creative', done: true },
+        ] },
+        { id: uid('pt'), title: 'Cierre y reporte', done: false, subtasks: [
+          { id: uid('pst'), title: 'Post-report final en Q4, tras el cierre 15 oct', done: false },
+        ] },
+      ],
+    },
+    {
+      id: 'proj_halloween_2026',
+      name: 'Halloween 2026 (USA Ecomm)',
+      tags: ['KR2'],
+      description: 'Primero de los 5 proyectos del calendario maestro Q4 USA Ecomm — estrategia digital de Halloween para Holstein en Amazon (1P), ajustada con info real de Comercial.',
+      objective: 'Aprovechar la ventana de Halloween en Ecommerce USA con contenido y pauta enfocada en 1P Amazon, sin Walmart ni UGC en esta fase.',
+      result: 'Propuesta (docx + pptx) entregada y corregida con fechas reales, alcance ajustado (sin Walmart, sin UGC) y propuesta de assets. Pendiente de aprobación y presupuesto.',
+      deliverable: 'Estrategia digital (docx) + presentación ejecutiva (pptx).',
+      tasks: [
+        { id: uid('pt'), title: 'Propuesta', done: true, subtasks: [
+          { id: uid('pst'), title: 'Estrategia y deck armados dentro del calendario Q4 USA Ecomm', done: true },
+          { id: uid('pst'), title: 'Corregido con info real de Comercial (Amazon 1P, sin Walmart, sin UGC)', done: true },
+        ] },
+        { id: uid('pt'), title: 'Aprobación y presupuesto', done: false, subtasks: [
+          { id: uid('pst'), title: 'Presentar y aprobar internamente', done: false },
+          { id: uid('pst'), title: 'Confirmar presupuesto', done: false },
+        ] },
+        { id: uid('pt'), title: 'Ejecución', done: false, subtasks: [
+          { id: uid('pst'), title: 'Pendiente de luz verde', done: false },
+        ] },
+      ],
+    },
   ];
+
+  // Botones de "ir a" en el detalle de cada Project — llevan directo al
+  // Budget Tracker, Campaign Tracker o el reporte visual de esa campaña,
+  // en vez de que el usuario tenga que ir a buscarlo por su cuenta en el
+  // nav. Las vistas con `view:` navegan dentro del HUB (goToView); las que
+  // tienen `href:` abren un link externo (el reporte HTML) en pestaña nueva.
+  const PROJECT_RELATED_LINKS = {
+    'Día WOW CCN (Casa Cuesta, RD)': [
+      { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
+      { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+      { label: 'Ver reporte visual completo', href: 'reports/Reporte_Dia_WOW_2026.html' },
+    ],
+    'RD Jumbo (Patatus) — Luperón y Megacentro': [
+      { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
+      { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+    ],
+    'Falabella Aniversario CO': [
+      { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
+      { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+    ],
+    'Hispanic Heritage Month USA': [
+      { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
+      { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+    ],
+    'Back to School USA 2026': [
+      { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
+      { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+      { label: 'Ver reporte visual completo', href: 'reports/Reporte_Consolidado_BTS_2026.html' },
+    ],
+  };
 
   const CAMPAIGN_METRICS_GUIDE = [
     ['Brand Awareness', 'Reach, frecuencia, CPM, video completion rate'],
@@ -3755,6 +3908,19 @@
     document.getElementById('projectDetailBarFill').style.width = pct + '%';
     document.getElementById('projectDetailPct').textContent = `${done}/${total} tareas · ${pct}%`;
 
+    const linksWrap = document.getElementById('projectDetailLinks');
+    if (linksWrap) {
+      const links = PROJECT_RELATED_LINKS[project.name] || [];
+      linksWrap.innerHTML = links.map((l) => l.href
+        ? `<a class="btn btn-ghost" href="${escapeHtml(l.href)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`
+        : `<button class="btn btn-ghost" data-project-link-view="${escapeHtml(l.view)}">${escapeHtml(l.label)}</button>`
+      ).join('');
+      linksWrap.hidden = links.length === 0;
+      linksWrap.querySelectorAll('[data-project-link-view]').forEach((btn) => {
+        btn.addEventListener('click', () => goToView(btn.dataset.projectLinkView));
+      });
+    }
+
     const list = document.getElementById('projectTaskList');
     if (!project.tasks.length) {
       list.innerHTML = `<div class="table-empty">No hay tasks todavía — agrega la primera con "+ Add Task".</div>`;
@@ -5542,13 +5708,19 @@
      budget real nunca quede pisado por error.
      ------------------------------------------------------------------------ */
 
-  const btState = { range: 'all' };
+  const btState = { range: 'all', customFrom: '', customTo: '' };
 
   function btNum(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
   function btMoney(n) { return '$' + btNum(n).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
 
   function btDateInRange(dateStr) {
     if (btState.range === 'all') return true;
+    if (btState.range === 'custom') {
+      if (!dateStr) return false;
+      if (btState.customFrom && dateStr < btState.customFrom) return false;
+      if (btState.customTo && dateStr > btState.customTo) return false;
+      return true;
+    }
     if (!dateStr) return false;
     const d = new Date(dateStr + 'T00:00:00');
     if (isNaN(d.getTime())) return false;
@@ -5559,16 +5731,71 @@
       return d >= start && d < end;
     }
     if (btState.range === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    if (btState.range === 'year') return d.getFullYear() === now.getFullYear();
     return true;
   }
 
   function btFilteredRows() { return budgetTracker.filter((r) => btDateInRange(r.flightStart)); }
 
+  // Agrupa las filas (una por canal) por su campo `campaign`, conservando el
+  // orden de primera aparición — así Budget Tracker se lee "por campaña"
+  // (un header con el total) con sus canales/activaciones debajo, en vez de
+  // una fila suelta por cada línea de gasto.
+  function btGroupRows(rows) {
+    const groups = [];
+    const byName = {};
+    rows.forEach((r) => {
+      const name = r.campaign || '(Sin campaña)';
+      if (!byName[name]) {
+        byName[name] = { campaign: name, rows: [] };
+        groups.push(byName[name]);
+      }
+      byName[name].rows.push(r);
+    });
+    return groups;
+  }
+
+  function btRowTpl(r) {
+    const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
+    const spent = btNum(r.spent);
+    const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+    return `
+    <tr data-brow-tr="${r.id}">
+      <td class="bt-editable" style="padding-left:24px;" contenteditable="true" data-brow="${r.id}" data-bkey="channel">${escapeHtml(r.channel || '')}</td>
+      <td class="bt-editable" contenteditable="true" data-brow="${r.id}" data-bkey="country">${escapeHtml(r.country || '')}</td>
+      <td class="bt-editable" contenteditable="true" data-brow="${r.id}" data-bkey="retailer">${escapeHtml(r.retailer || '')}</td>
+      <td class="bt-editable" contenteditable="true" data-brow="${r.id}" data-bkey="kind">${escapeHtml(r.kind || '')}</td>
+      <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightStart" value="${r.flightStart || ''}"></td>
+      <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightEnd" value="${r.flightEnd || ''}"></td>
+      <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedPaidMedia">${btNum(r.approvedPaidMedia).toLocaleString('en-US')}</td>
+      <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedMediaKit">${btNum(r.approvedMediaKit).toLocaleString('en-US')}</td>
+      <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="spent">${spent.toLocaleString('en-US')}</td>
+      <td style="text-align:right;font-weight:700" data-brow-pct="${r.id}">${pct}%</td>
+      <td class="row-delete-cell"><button class="icon-btn" data-delete-brow="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
+    </tr>`;
+  }
+
+  function btGroupHeaderTpl(g) {
+    const approved = g.rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+    const spent = g.rows.reduce((s, r) => s + btNum(r.spent), 0);
+    const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+    const first = g.rows[0] || {};
+    return `
+    <tr class="bt-group-row" data-bgroup="${escapeHtml(g.campaign)}">
+      <td colspan="3"><strong class="bt-editable" contenteditable="true" data-bgroup-rename="${escapeHtml(g.campaign)}">${escapeHtml(g.campaign)}</strong> · ${escapeHtml(first.country || '')}${first.retailer ? ' · ' + escapeHtml(first.retailer) : ''}</td>
+      <td colspan="3">${g.rows.length} activación${g.rows.length === 1 ? '' : 'es'}</td>
+      <td style="text-align:right">${btMoney(approved)}</td>
+      <td></td>
+      <td style="text-align:right">${btMoney(spent)}</td>
+      <td style="text-align:right;font-weight:700">${pct}%</td>
+      <td></td>
+    </tr>`;
+  }
+
   function renderBudgetTracker() {
     const body = document.getElementById('btBody');
     if (!body) return;
     const empty = document.getElementById('btEmpty');
-    const statGrid = document.getElementById('btStatGrid');
     const rows = btFilteredRows();
 
     if (rows.length === 0) {
@@ -5576,48 +5803,58 @@
       if (empty) empty.hidden = false;
     } else {
       if (empty) empty.hidden = true;
-      body.innerHTML = rows.map((r) => {
-        const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
-        const spent = btNum(r.spent);
-        const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
-        return `
-        <tr>
-          <td contenteditable="true" data-brow="${r.id}" data-bkey="campaign">${escapeHtml(r.campaign || '')}</td>
-          <td contenteditable="true" data-brow="${r.id}" data-bkey="country">${escapeHtml(r.country || '')}</td>
-          <td contenteditable="true" data-brow="${r.id}" data-bkey="retailer">${escapeHtml(r.retailer || '')}</td>
-          <td contenteditable="true" data-brow="${r.id}" data-bkey="channel">${escapeHtml(r.channel || '')}</td>
-          <td contenteditable="true" data-brow="${r.id}" data-bkey="kind">${escapeHtml(r.kind || '')}</td>
-          <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightStart" value="${r.flightStart || ''}"></td>
-          <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightEnd" value="${r.flightEnd || ''}"></td>
-          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedPaidMedia">${btNum(r.approvedPaidMedia).toLocaleString('en-US')}</td>
-          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedMediaKit">${btNum(r.approvedMediaKit).toLocaleString('en-US')}</td>
-          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="spent">${spent.toLocaleString('en-US')}</td>
-          <td style="text-align:right;font-weight:700">${pct}%</td>
-          <td class="row-delete-cell"><button class="icon-btn" data-delete-brow="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
-        </tr>`;
-      }).join('');
+      body.innerHTML = btGroupRows(rows).map((g) => btGroupHeaderTpl(g) + g.rows.map(btRowTpl).join('')).join('');
     }
+    btUpdateStatsAndGroupHeaders();
+  }
 
+  // Actualización liviana: recalcula los stat cards de arriba y refresca
+  // solo las filas de header de grupo (sin tocar las filas de canal, que
+  // son las que el usuario puede estar editando) — así un blur en una celda
+  // no le hace perder foco/typing a mitad de una edición. Se usa después de
+  // cada edición de celda; el re-render completo (renderBudgetTracker) queda
+  // solo para agregar/borrar fila o cambiar el filtro de fecha.
+  function btUpdateStatsAndGroupHeaders() {
+    const statGrid = document.getElementById('btStatGrid');
+    const rows = btFilteredRows();
     if (statGrid) {
       const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
       const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
       const pctTotal = approvedTotal > 0 ? Math.round((spentTotal / approvedTotal) * 100) : 0;
+      const campaignCount = new Set(rows.map((r) => r.campaign || '(Sin campaña)')).size;
       statGrid.innerHTML = `
         <div class="stat-card"><div class="stat-card-label">Aprobado total (USD)</div><div class="stat-card-value">${btMoney(approvedTotal)}</div></div>
         <div class="stat-card"><div class="stat-card-label">Ejecutado total (USD)</div><div class="stat-card-value">${btMoney(spentTotal)}</div></div>
         <div class="stat-card"><div class="stat-card-label">% ejecutado</div><div class="stat-card-value">${pctTotal}%</div></div>
-        <div class="stat-card"><div class="stat-card-label">Filas en este rango</div><div class="stat-card-value">${rows.length}</div></div>
+        <div class="stat-card"><div class="stat-card-label">Campañas en este rango</div><div class="stat-card-value">${campaignCount}</div></div>
       `;
     }
+    btGroupRows(rows).forEach((g) => {
+      const el = document.querySelector(`.bt-group-row[data-bgroup="${CSS.escape(g.campaign)}"]`);
+      if (el) el.outerHTML = btGroupHeaderTpl(g);
+    });
   }
 
   document.querySelectorAll('#btDateFilters .filter-chip').forEach((btn) => {
     btn.addEventListener('click', () => {
       btState.range = btn.dataset.btRange;
       document.querySelectorAll('#btDateFilters .filter-chip').forEach((b) => b.classList.toggle('active', b === btn));
+      const customWrap = document.getElementById('btCustomRangeWrap');
+      if (customWrap) customWrap.hidden = btState.range !== 'custom';
       renderBudgetTracker();
     });
   });
+
+  const btCustomApplyBtn = document.getElementById('btCustomApplyBtn');
+  if (btCustomApplyBtn) {
+    btCustomApplyBtn.addEventListener('click', () => {
+      const fromEl = document.getElementById('btCustomFrom');
+      const toEl = document.getElementById('btCustomTo');
+      btState.customFrom = fromEl ? fromEl.value : '';
+      btState.customTo = toEl ? toEl.value : '';
+      renderBudgetTracker();
+    });
+  }
 
   document.getElementById('btAddRowBtn').addEventListener('click', () => {
     budgetTracker.unshift({ id: uid('bt'), campaign: '', country: '', retailer: '', channel: '', kind: 'Paid Media', flightStart: '', flightEnd: '', approvedPaidMedia: 0, approvedMediaKit: 0, spent: 0 });
@@ -5627,6 +5864,17 @@
 
   const btBodyEl = document.getElementById('btBody');
   btBodyEl.addEventListener('focusout', (e) => {
+    const renameEl = e.target.closest('[data-bgroup-rename]');
+    if (renameEl) {
+      const oldName = renameEl.dataset.bgroupRename;
+      const newName = renameEl.textContent.trim();
+      if (newName && newName !== oldName) {
+        budgetTracker.forEach((r) => { if ((r.campaign || '(Sin campaña)') === oldName) r.campaign = newName; });
+        persistBudgetTracker();
+      }
+      renderBudgetTracker();
+      return;
+    }
     const td = e.target.closest('td[contenteditable="true"]');
     if (!td) return;
     const row = budgetTracker.find((r) => r.id === td.dataset.brow);
@@ -5635,7 +5883,20 @@
     const isNumeric = ['approvedPaidMedia', 'approvedMediaKit', 'spent'].indexOf(key) !== -1;
     row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
     persistBudgetTracker();
-    renderBudgetTracker();
+    // Si se editó el nombre de campaña, la fila puede tener que reflowear a
+    // otro grupo — eso solo lo resuelve un re-render completo. Para
+    // cualquier otro campo, una actualización liviana evita perder el foco.
+    if (key === 'campaign') {
+      renderBudgetTracker();
+    } else {
+      const pctCell = document.querySelector(`[data-brow-pct="${row.id}"]`);
+      if (pctCell) {
+        const approved = btNum(row.approvedPaidMedia) + btNum(row.approvedMediaKit);
+        const pct = approved > 0 ? Math.round((btNum(row.spent) / approved) * 100) : 0;
+        pctCell.textContent = pct + '%';
+      }
+      btUpdateStatsAndGroupHeaders();
+    }
   });
   btBodyEl.addEventListener('change', (e) => {
     const input = e.target.closest('input[type="date"]');
@@ -5661,7 +5922,7 @@
     const rows = btFilteredRows();
     const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
     const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
-    const rangeLabel = { all: 'Todo el periodo', week: 'Esta semana', month: 'Este mes' }[btState.range] || 'Todo el periodo';
+    const rangeLabel = { all: 'Todo el periodo', week: 'Esta semana', month: 'Este mes', year: 'Este año', custom: `${btState.customFrom || '…'} – ${btState.customTo || '…'}` }[btState.range] || 'Todo el periodo';
     area.innerHTML = `
       <div class="cr-print-topbar"></div>
       <h1 style="font-size:24px;margin-bottom:4px;">Budget Tracker — Distrivalto Digital Marketing</h1>
@@ -5707,8 +5968,13 @@
      ------------------------------------------------------------------------ */
 
   const ctState = { status: 'all' };
+  const CT_STATUS_OPTIONS = ['Activa', 'Próxima', 'Finalizada', 'Sin fecha'];
 
-  function ctComputeStatus(row) {
+  // Cálculo automático por fecha — se usa como default, pero el usuario
+  // puede forzar un estado manual por campaña (row.status) cuando el cálculo
+  // por fecha no refleja la realidad (ej. la activación terminó antes o
+  // sigue corriendo más allá del flight end original).
+  function ctAutoStatus(row) {
     if (!row.flightStart && !row.flightEnd) return 'Sin fecha';
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const start = row.flightStart ? new Date(row.flightStart + 'T00:00:00') : null;
@@ -5716,6 +5982,11 @@
     if (start && today < start) return 'Próxima';
     if (end && today > end) return 'Finalizada';
     return 'Activa';
+  }
+
+  function ctComputeStatus(row) {
+    if (row.status && CT_STATUS_OPTIONS.indexOf(row.status) !== -1) return row.status;
+    return ctAutoStatus(row);
   }
 
   function ctStatusFilterKey(label) {
@@ -5748,19 +6019,36 @@
     body.innerHTML = rows.map((r) => {
       const status = ctComputeStatus(r);
       return `
-      <tr>
-        <td contenteditable="true" data-crowt="${r.id}" data-ckey="campaign">${escapeHtml(r.campaign || '')}</td>
-        <td contenteditable="true" data-crowt="${r.id}" data-ckey="country">${escapeHtml(r.country || '')}</td>
-        <td contenteditable="true" data-crowt="${r.id}" data-ckey="retailer">${escapeHtml(r.retailer || '')}</td>
-        <td contenteditable="true" data-crowt="${r.id}" data-ckey="platforms">${escapeHtml(r.platforms || '')}</td>
-        <td contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="approvedBudget">${btNum(r.approvedBudget).toLocaleString('en-US')}</td>
-        <td contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="spent">${btNum(r.spent).toLocaleString('en-US')}</td>
+      <tr data-crow-tr="${r.id}">
+        <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="campaign">${escapeHtml(r.campaign || '')}</td>
+        <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="country">${escapeHtml(r.country || '')}</td>
+        <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="retailer">${escapeHtml(r.retailer || '')}</td>
+        <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="platforms">${escapeHtml(r.platforms || '')}</td>
+        <td class="ct-editable" contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="approvedBudget">${btNum(r.approvedBudget).toLocaleString('en-US')}</td>
+        <td class="ct-editable" contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="spent">${btNum(r.spent).toLocaleString('en-US')}</td>
         <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightStart" value="${r.flightStart || ''}"></td>
         <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightEnd" value="${r.flightEnd || ''}"></td>
-        <td><span style="display:inline-block;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;${ctBadgeColor(status)}">${status}</span></td>
+        <td>
+          <select data-crowt="${r.id}" data-ckey="status" style="border-radius:20px;padding:4px 8px;font-size:11.5px;font-weight:700;border:1px solid var(--line);${ctBadgeColor(status)}">
+            <option value="" ${!r.status ? 'selected' : ''}>Auto (${ctAutoStatus(r)})</option>
+            ${CT_STATUS_OPTIONS.map((opt) => `<option value="${opt}" ${r.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+          </select>
+        </td>
         <td class="row-delete-cell"><button class="icon-btn" data-delete-crowt="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
       </tr>`;
     }).join('');
+  }
+
+  // Igual que btUpdateStatsAndGroupHeaders: refresca solo el color del
+  // select de Estado de cada fila visible, sin re-renderizar toda la tabla
+  // (que le haría perder foco a una celda que el usuario está editando).
+  function ctUpdateStatWidgets() {
+    document.querySelectorAll('#ctBody select[data-ckey="status"]').forEach((sel) => {
+      const row = campaignTracker.find((r) => r.id === sel.dataset.crowt);
+      if (!row) return;
+      const status = ctComputeStatus(row);
+      sel.setAttribute('style', `border-radius:20px;padding:4px 8px;font-size:11.5px;font-weight:700;border:1px solid var(--line);${ctBadgeColor(status)}`);
+    });
   }
 
   document.querySelectorAll('#ctStatusFilters .filter-chip').forEach((btn) => {
@@ -5787,16 +6075,31 @@
     const isNumeric = ['approvedBudget', 'spent'].indexOf(key) !== -1;
     row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
     persistCampaignTracker();
-    renderCampaignTracker();
+    // Actualización liviana (no re-renderiza toda la tabla) para no perder
+    // el foco a mitad de una edición — mismo fix que Budget Tracker.
+    ctUpdateStatWidgets();
+    if (ctState.status !== 'all') renderCampaignTracker();
   });
   ctBodyEl.addEventListener('change', (e) => {
-    const input = e.target.closest('input[type="date"]');
-    if (!input) return;
-    const row = campaignTracker.find((r) => r.id === input.dataset.crowt);
-    if (!row) return;
-    row[input.dataset.ckey] = input.value;
-    persistCampaignTracker();
-    renderCampaignTracker();
+    const dateInput = e.target.closest('input[type="date"]');
+    if (dateInput) {
+      const row = campaignTracker.find((r) => r.id === dateInput.dataset.crowt);
+      if (!row) return;
+      row[dateInput.dataset.ckey] = dateInput.value;
+      persistCampaignTracker();
+      ctUpdateStatWidgets();
+      if (ctState.status !== 'all') renderCampaignTracker();
+      return;
+    }
+    const statusSelect = e.target.closest('select[data-ckey="status"]');
+    if (statusSelect) {
+      const row = campaignTracker.find((r) => r.id === statusSelect.dataset.crowt);
+      if (!row) return;
+      row.status = statusSelect.value; // '' = auto (calculado por fecha)
+      persistCampaignTracker();
+      ctUpdateStatWidgets();
+      if (ctState.status !== 'all') renderCampaignTracker();
+    }
   });
   ctBodyEl.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-delete-crowt]');

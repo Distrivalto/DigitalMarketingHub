@@ -2264,3 +2264,23 @@ ul { list-style: none; }
   text-align: center;
 }
 .hub-toast-visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* Budget Tracker / Campaign Tracker — celdas editables, agrupado por
+   campaña, y links relacionados en el detalle de Project. */
+.bt-editable, .ct-editable {
+  cursor: text;
+  border-bottom: 1px dashed transparent;
+  transition: background-color .12s, border-color .12s;
+}
+.bt-editable:hover, .ct-editable:hover {
+  background: rgba(61,183,255,.06);
+  border-bottom-color: rgba(29,43,127,.25);
+}
+.bt-editable:focus, .ct-editable:focus {
+  background: rgba(61,183,255,.10);
+  border-bottom-color: var(--blue);
+  outline: none;
+}
+.bt-group-row { background: #EEF6FF; font-size: 12.5px; }
+.bt-group-row td { padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.project-detail-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }

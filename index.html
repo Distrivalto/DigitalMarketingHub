@@ -221,6 +221,7 @@
               <div class="timeline-progress"><div class="timeline-progress-fill" id="projectDetailBarFill"></div></div>
               <span class="project-progress-label" id="projectDetailPct"></span>
             </div>
+            <div class="project-detail-links" id="projectDetailLinks"></div>
             <div class="project-meta-grid">
               <div class="project-meta-field">
                 <label>Descripción</label>
@@ -929,23 +930,32 @@
 
       <!-- ============ BUDGET TRACKER ============ -->
       <section class="view" id="view-budgetTracker">
-        <p class="view-intro" style="margin-bottom:14px;">Mismos datos del Budget_Tracker_Q3.xlsx, en vivo: presupuesto aprobado vs. ejecutado por campaña y canal, en USD. Filtrable por fecha (Flight start) y exportable a PDF.</p>
+        <p class="view-intro" style="margin-bottom:14px;">Mismos datos del Budget_Tracker_Q3.xlsx, en vivo: presupuesto aprobado vs. ejecutado, agrupado por campaña. Toda celda es editable — haz clic directo sobre el texto o el número. Filtrable por fecha (como en Meta Ads Manager) y exportable a PDF.</p>
         <div class="stat-grid" id="btStatGrid" style="margin-bottom:18px;"></div>
         <div class="toolbar">
           <div class="filter-group" id="btDateFilters">
             <button class="filter-chip active" data-bt-range="all">Todo</button>
             <button class="filter-chip" data-bt-range="week">Esta semana</button>
             <button class="filter-chip" data-bt-range="month">Este mes</button>
+            <button class="filter-chip" data-bt-range="year">Este año</button>
+            <button class="filter-chip" data-bt-range="custom">Rango personalizado</button>
           </div>
           <div class="toolbar-spacer"></div>
           <button class="btn btn-ghost" id="btExportPdfBtn">Descargar PDF</button>
           <button class="btn btn-primary" id="btAddRowBtn">+ Agregar fila</button>
         </div>
+        <div class="filter-group" id="btCustomRangeWrap" hidden style="margin-bottom:14px;gap:8px;align-items:center;">
+          <label style="font-size:12.5px;color:var(--ink-soft);">Desde</label>
+          <input type="date" class="text-input" id="btCustomFrom" style="min-width:130px;">
+          <label style="font-size:12.5px;color:var(--ink-soft);">Hasta</label>
+          <input type="date" class="text-input" id="btCustomTo" style="min-width:130px;">
+          <button class="btn btn-ghost" id="btCustomApplyBtn">Aplicar rango</button>
+        </div>
         <div class="table-card">
           <table class="data-table" id="btTable">
             <thead>
               <tr>
-                <th>Campaña</th><th>País</th><th>Retailer</th><th>Canal</th><th>Tipo</th>
+                <th>Campaña / Canal</th><th>País</th><th>Retailer</th><th>Tipo</th>
                 <th>Flight start</th><th>Flight end</th>
                 <th>Aprobado Paid Media (USD)</th><th>Aprobado Media Kit (USD)</th>
                 <th>Ejecutado (USD)</th><th>% ejecutado</th><th></th>
