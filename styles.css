@@ -2147,10 +2147,12 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--navy), var(--navy-deep));
+  background: rgba(10, 15, 60, 0.55);
   padding: 20px;
 }
+.auth-gate.is-hidden { display: none; }
 .auth-card {
+  position: relative;
   width: 100%;
   max-width: 360px;
   background: var(--white);
@@ -2159,6 +2161,41 @@ ul { list-style: none; }
   text-align: center;
   box-shadow: 0 24px 60px rgba(10, 15, 60, 0.35);
 }
+.auth-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.auth-close:hover { color: var(--ink); }
+.hub-admin-login-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(10, 15, 60, 0.12);
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+.hub-admin-login-btn:hover { opacity: 1; color: var(--ink); }
+.hub-admin-login-btn.is-signed-in { border-color: var(--blue); color: var(--blue); }
 .auth-logo { height: 32px; margin-bottom: 18px; }
 .auth-card h1 { font-size: 19px; margin: 0 0 4px; color: var(--ink); }
 .auth-sub { font-size: 13px; color: var(--ink-faint); margin: 0 0 20px; }

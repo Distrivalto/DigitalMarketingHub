@@ -15,12 +15,13 @@
 </head>
 <body>
 
-<!-- ============ LOGIN GATE ============ -->
-<div class="auth-gate" id="authGate">
+<!-- ============ LOGIN GATE (modal, oculto por default — el HUB se ve sin login) ============ -->
+<div class="auth-gate is-hidden" id="authGate">
   <div class="auth-card">
+    <button type="button" class="auth-close" id="authCloseBtn" aria-label="Cerrar">&times;</button>
     <img src="assets/distrivalto-logo.png" alt="Distrivalto" class="auth-logo">
     <h1>Digital Marketing HUB</h1>
-    <p class="auth-sub">Ingresa con tu correo de equipo, sin contraseña</p>
+    <p class="auth-sub">Inicia sesión para editar (ver el HUB no requiere login)</p>
     <form id="authForm">
       <input type="email" id="authEmail" placeholder="Email" required autocomplete="username">
       <input type="password" id="authPassword" placeholder="Contraseña (opcional)" autocomplete="current-password">
@@ -33,7 +34,13 @@
   </div>
 </div>
 
-<div class="app-shell" style="display:none;">
+<!-- Botón discreto para iniciar sesión (edición) — el HUB carga visible sin esto -->
+<button type="button" class="hub-admin-login-btn" id="hubAdminLoginBtn" title="Iniciar sesión">
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+  <span>Iniciar sesión</span>
+</button>
+
+<div class="app-shell">
 
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 

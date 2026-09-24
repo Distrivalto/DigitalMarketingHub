@@ -511,9 +511,9 @@
       ],
     },
     {
-      id: uid('kr'), quarter: 'Q3', done: false,
+      id: uid('kr'), quarter: 'Q3', done: true,
       title: 'Campañas Piloto Medibles — 3 activaciones',
-      desc: 'Se activan 3 campañas digitales en Q3: Back to School (EEUU) — agosto, Heritage Month (EEUU) — septiembre, y La Mega Promo (Ecuador) — septiembre. Cada una segmentada a su público específico, con objetivo, canal, presupuesto y KPIs propios definidos en el brief antes del lanzamiento.',
+      desc: 'Se activan 3 campañas digitales en Q3: Back to School (EEUU) — agosto, Heritage Month (EEUU) — septiembre, y Día WOW CCN (Casa Cuesta, RD) — septiembre. (La Mega Promo Ecuador quedó excluida: el retailer la lanzó por su cuenta, sin ejecución de Digital — Día WOW pasó a ser el piloto #3 confirmado.) Cada una segmentada a su público específico, con objetivo, canal, presupuesto y KPIs propios definidos en el brief antes del lanzamiento. Las 3 ya están lanzadas — KPI1 (on-time) 83,3% y KPI2 (measurement compliance) 33,3% a la fecha, ver Budget Tracker Q3.',
       sections: [
         { heading: 'Entregables', items: [
           'Cada una de las 3 campañas activada y lanzada en su fecha.',
@@ -1024,6 +1024,9 @@
     { name: 'Execution Guide (Guía paso a paso)', desc: 'Objective, concrete steps, tools, and expected deliverable for each of the 27 items.', href: '../02 - Plan 30-60-90/Guia_Ejecucion_Plan_30-60-90.docx' },
     { name: 'Digital Ecosystem Diagnosis', desc: 'Deliverable #1 of the 30-day phase — living document with real audit findings.', href: '../03 - Diagnostico Ecosistema Digital/Diagnostico_Ecosistema_Digital.docx' },
     { name: 'KPIs & OKRs H2 2026 (Final)', desc: 'Final KPIs and OKRs agreed with the Marketing Manager — Q3/Q4 key results and pilot campaign briefs.', href: '../04 - KPIs y OKRs H2 2026/Final_Propuesta_KPIs_OKRs_2026.docx' },
+    { name: 'Budget Tracker Q3 2026', desc: 'Approved vs. executed budget per campaign, split Paid Media / Media Kit (Ecomm), all in USD — KPI1 83.3%, KPI2 33.3% (in-flight campaigns pending final report). Updated 24 Sep 2026.', href: '../30 - Budget Tracker Campanas/Budget_Tracker_Q3.xlsx' },
+    { name: 'Reporte Día WOW CCN (Casa Cuesta, RD)', desc: 'Piloto #3 de KR2 — reporte completo de campaña: Meta Ads + Media Kit Ecomm, $3.699,18 ejecutado de $3.700 aprobado.', href: '../Republica Dominicana/25 - CCN Casa Cuesta y Jumbo/Reporte_Dia_WOW_2026.html' },
+    { name: 'Reporte Back to School USA', desc: 'Reporte consolidado ECOMM + Digital de la campaña BTS — piloto de KR2, resultados y metodología de medición.', href: '../USA/06 - Back to School USA 2026/Reporte_Consolidado_BTS_2026.html' },
   ];
 
   const DEFAULT_CAMPAIGN_PLATFORMS = ['Facebook', 'Instagram', 'Meta Ads (Total)', 'TikTok', 'Pinterest', 'Google Ads', 'LinkedIn', 'Amazon Attribution', 'Walmart'];

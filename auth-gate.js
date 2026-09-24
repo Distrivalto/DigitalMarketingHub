@@ -55,7 +55,9 @@
   ];
 
   window.__hubCanEditKey = function (key) {
-    return window.__hubRole === 'admin' || TEAM_EDITABLE_KEYS.indexOf(key) !== -1;
+    if (window.__hubRole === 'admin') return true;
+    if (window.__hubRole === 'contributor') return TEAM_EDITABLE_KEYS.indexOf(key) !== -1;
+    return false; // viewer (sin login): siempre de solo lectura, sin excepciones
   };
 
   function showToast(msg) {
@@ -76,13 +78,19 @@
 
   function applyReadOnlyBanners() {
     if (window.__hubRole === 'admin') return;
+    // Un visitante sin login (viewer) es de solo lectura en TODO, incluso en
+    // las vistas que un contributor logueado sí puede editar (Content Inputs,
+    // Briefs, Calendario, Registro de Campañas) — esas excepciones son solo
+    // para gente del equipo que inició sesión.
+    var isViewer = window.__hubRole !== 'contributor';
+    var viewerMsg = 'Solo lectura. Inicia sesión (botón abajo a la derecha) si sos del equipo y necesitás editar.';
     ALL_VIEW_IDS.forEach(function (id) {
-      if (TEAM_EDITABLE_VIEW_IDS.indexOf(id) !== -1) return;
+      if (!isViewer && TEAM_EDITABLE_VIEW_IDS.indexOf(id) !== -1) return;
       var view = document.getElementById(id);
       if (!view || view.querySelector('.hub-readonly-banner')) return;
       var banner = document.createElement('div');
       banner.className = 'hub-readonly-banner';
-      banner.textContent = 'Solo lectura. Los cambios en esta sección los hace el Digital Marketing Specialist.';
+      banner.textContent = isViewer ? viewerMsg : 'Solo lectura. Los cambios en esta sección los hace el Digital Marketing Specialist.';
       view.insertBefore(banner, view.firstChild);
     });
     AF_READONLY_PANEL_IDS.forEach(function (id) {
@@ -90,7 +98,7 @@
       if (!panel || panel.querySelector('.hub-readonly-banner')) return;
       var banner = document.createElement('div');
       banner.className = 'hub-readonly-banner';
-      banner.textContent = 'Solo lectura. Estos catálogos (Digital, Trade, Brand, Media Kit) los actualiza el Digital Marketing Specialist; el Registro de Campañas sí lo puede editar todo el equipo.';
+      banner.textContent = isViewer ? viewerMsg : 'Solo lectura. Estos catálogos (Digital, Trade, Brand, Media Kit) los actualiza el Digital Marketing Specialist; el Registro de Campañas sí lo puede editar todo el equipo.';
       panel.insertBefore(banner, panel.firstChild);
     });
   }
@@ -170,14 +178,60 @@
     return result.data.role || 'contributor';
   }
 
+  function hideGate() {
+    if (gateEl) gateEl.classList.add('is-hidden');
+  }
+  function showGate() {
+    if (gateEl) gateEl.classList.remove('is-hidden');
+  }
+
+  var loginBtn = document.getElementById('hubAdminLoginBtn');
+  var closeBtn = document.getElementById('authCloseBtn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', function () {
+      if (currentUser) return; // ya logueado, el botón solo indica el estado
+      showGate();
+    });
+  }
+  if (closeBtn) {
+    closeBtn.addEventListener('click', hideGate);
+  }
+
+  function setLoginBtnSignedIn(user) {
+    if (!loginBtn) return;
+    loginBtn.classList.add('is-signed-in');
+    var label = loginBtn.querySelector('span');
+    if (label) label.textContent = user.email + ' (' + (window.__hubRole || '') + ')';
+    loginBtn.title = 'Sesión iniciada como ' + user.email;
+  }
+
+  // Arranca el HUB para cualquier visitante SIN pedir login — de solo
+  // lectura en todo. Es lo primero que corre al abrir la página.
+  async function bootAnonymous() {
+    window.__hubRole = 'viewer';
+    document.body.classList.remove('role-admin', 'role-contributor');
+    document.body.classList.add('role-viewer');
+    hideGate();
+    if (shellEl) shellEl.style.display = '';
+    window.__HUB_REMOTE_DATA = await fetchAllRows();
+    if (!appScriptLoaded) {
+      loadAppScript();
+      setupRealtime();
+    }
+    setTimeout(applyReadOnlyBanners, 300);
+  }
+
+  // Sube de "viewer" a admin/contributor cuando alguien inicia sesión
+  // (por el botón de abajo a la derecha) — sin recargar la página.
   async function bootHub(user) {
     currentUser = user;
     window.__hubCurrentUser = user;
     window.__hubRole = await fetchRole(user.id);
-    document.body.classList.remove('role-admin', 'role-contributor');
+    document.body.classList.remove('role-admin', 'role-contributor', 'role-viewer');
     document.body.classList.add('role-' + window.__hubRole);
+    setLoginBtnSignedIn(user);
 
-    if (gateEl) gateEl.style.display = 'none';
+    hideGate();
     if (shellEl) shellEl.style.display = '';
     window.__HUB_REMOTE_DATA = await fetchAllRows();
 
@@ -187,8 +241,25 @@
     } else if (window.__hubReloadAll) {
       window.__hubReloadAll();
     }
+    // Quita los banners de solo-lectura que haya puesto el modo viewer,
+    // antes de volver a evaluarlos con el rol real.
+    document.querySelectorAll('.hub-readonly-banner').forEach(function (b) {
+      if (window.__hubRole !== 'admin') return; // si sigue sin poder editar todo, applyReadOnlyBanners los repone donde corresponda
+      b.remove();
+    });
     setTimeout(applyReadOnlyBanners, 300);
   }
+
+  // Arranque inicial: si ya había sesión guardada en este navegador, entra
+  // directo con el rol real; si no, cualquiera ve el HUB igual, sin login.
+  supabase.auth.getSession().then(function (result) {
+    var session = result && result.data && result.data.session;
+    if (session && session.user) {
+      bootHub(session.user);
+    } else {
+      bootAnonymous();
+    }
+  });
 
   // Empuja un cambio a Supabase. app.js llama a esto desde saveStore().
   window.__hubPushToRemote = async function (key, value) {
@@ -243,11 +314,14 @@
     });
   }
 
-  // Cubre dos casos: (1) ya había sesión activa en este navegador, entra
-  // directo; (2) la persona acaba de volver del link de su correo, Supabase
-  // detecta el token en la URL y dispara este mismo evento con la sesión ya
-  // creada.
+  // El arranque inicial (sesión guardada o anónimo) ya lo maneja
+  // supabase.auth.getSession() más arriba. Este listener solo cubre lo que
+  // pasa DESPUÉS de que la página ya cargó: alguien vuelve del link de su
+  // correo, o entra con contraseña por el modal — ahí sí subimos de "viewer"
+  // al rol real. Se ignora el evento INITIAL_SESSION para no arrancar todo
+  // dos veces.
   supabase.auth.onAuthStateChange(function (event, session) {
+    if (event === 'INITIAL_SESSION') return;
     if (session && session.user) {
       bootHub(session.user);
     }
