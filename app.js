@@ -1202,6 +1202,8 @@
     afBrand: 'dmg_af_brand_v1',
     afPacks: 'dmg_af_packs_v2',
     afCampaigns: 'dmg_af_campaigns_v1',
+    budgetTracker: 'dmg_budget_tracker_v1',
+    campaignTracker: 'dmg_campaign_tracker_v1',
   };
 
   function loadStore(key, fallback) {
@@ -1261,6 +1263,8 @@
   let afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
   let afPacks = loadStore(STORE_KEYS.afPacks, DEFAULT_AF_PACKS);
   let afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
+  let budgetTracker = loadStore(STORE_KEYS.budgetTracker, []);
+  let campaignTracker = loadStore(STORE_KEYS.campaignTracker, []);
 
   function persistPlatforms() { saveStore(STORE_KEYS.platforms, platforms); }
   function persistAccess() { saveStore(STORE_KEYS.access, accessState); }
@@ -1292,6 +1296,8 @@
   function persistAFBrand() { saveStore(STORE_KEYS.afBrand, afBrand); }
   function persistAFPacks() { saveStore(STORE_KEYS.afPacks, afPacks); }
   function persistAFCampaigns() { saveStore(STORE_KEYS.afCampaigns, afCampaigns); }
+  function persistBudgetTracker() { saveStore(STORE_KEYS.budgetTracker, budgetTracker); }
+  function persistCampaignTracker() { saveStore(STORE_KEYS.campaignTracker, campaignTracker); }
 
   function defaultAccessRow() {
     const row = {};
@@ -1385,6 +1391,8 @@
     audit: { title: 'Platform Audit', sub: 'Health check across all governed platforms' },
     quickwins: { title: 'Quick Wins', sub: 'Control center, todo lo que se está trabajando ahora mismo, por proyecto' },
     reports: { title: 'Reports', sub: 'Datos generales por canal y reportes estándar por campaña' },
+    budgetTracker: { title: 'Budget Tracker', sub: 'Presupuesto aprobado vs. ejecutado por campaña y canal — filtrable por fecha, exportable a PDF' },
+    campaignTracker: { title: 'Campaign Tracker', sub: 'Qué campaña está activa ahora mismo, con qué presupuesto y en qué plataformas' },
     notes: { title: 'Meeting Notes', sub: 'Record decisions and action items' },
     timeline: { title: 'Project Timeline', sub: 'Foundation through full execution' },
     settings: { title: 'Settings', sub: 'Team, roles, and preferences' },
@@ -5481,6 +5489,8 @@
     renderGrowthChart();
     renderActivationFramework();
     renderCampaignReportBank();
+    renderBudgetTracker();
+    renderCampaignTracker();
   }
 
   // Vuelve a cargar los 19 tipos de dato desde window.__HUB_REMOTE_DATA
@@ -5518,9 +5528,284 @@
     afBrand = loadStore(STORE_KEYS.afBrand, DEFAULT_AF_BRAND);
     afPacks = loadStore(STORE_KEYS.afPacks, DEFAULT_AF_PACKS);
     afCampaigns = loadStore(STORE_KEYS.afCampaigns, DEFAULT_AF_CAMPAIGNS);
+    budgetTracker = loadStore(STORE_KEYS.budgetTracker, []);
+    campaignTracker = loadStore(STORE_KEYS.campaignTracker, []);
     renderAll();
   }
   window.__hubReloadAll = reloadAllFromRemote;
+
+  /* ------------------------------------------------------------------------
+     BUDGET TRACKER — vista interactiva de Budget_Tracker_Q3.xlsx en vivo,
+     una fila por canal (no por campaña), filtrable por Flight start y
+     exportable a PDF. Solo admin puede editar (mismo criterio que Trade/
+     Brand) — el equipo la ve pero no la modifica, para que el numero de
+     budget real nunca quede pisado por error.
+     ------------------------------------------------------------------------ */
+
+  const btState = { range: 'all' };
+
+  function btNum(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function btMoney(n) { return '$' + btNum(n).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
+
+  function btDateInRange(dateStr) {
+    if (btState.range === 'all') return true;
+    if (!dateStr) return false;
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return false;
+    const now = new Date();
+    if (btState.range === 'week') {
+      const start = new Date(now); start.setHours(0, 0, 0, 0); start.setDate(now.getDate() - now.getDay());
+      const end = new Date(start); end.setDate(start.getDate() + 7);
+      return d >= start && d < end;
+    }
+    if (btState.range === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    return true;
+  }
+
+  function btFilteredRows() { return budgetTracker.filter((r) => btDateInRange(r.flightStart)); }
+
+  function renderBudgetTracker() {
+    const body = document.getElementById('btBody');
+    if (!body) return;
+    const empty = document.getElementById('btEmpty');
+    const statGrid = document.getElementById('btStatGrid');
+    const rows = btFilteredRows();
+
+    if (rows.length === 0) {
+      body.innerHTML = '';
+      if (empty) empty.hidden = false;
+    } else {
+      if (empty) empty.hidden = true;
+      body.innerHTML = rows.map((r) => {
+        const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
+        const spent = btNum(r.spent);
+        const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+        return `
+        <tr>
+          <td contenteditable="true" data-brow="${r.id}" data-bkey="campaign">${escapeHtml(r.campaign || '')}</td>
+          <td contenteditable="true" data-brow="${r.id}" data-bkey="country">${escapeHtml(r.country || '')}</td>
+          <td contenteditable="true" data-brow="${r.id}" data-bkey="retailer">${escapeHtml(r.retailer || '')}</td>
+          <td contenteditable="true" data-brow="${r.id}" data-bkey="channel">${escapeHtml(r.channel || '')}</td>
+          <td contenteditable="true" data-brow="${r.id}" data-bkey="kind">${escapeHtml(r.kind || '')}</td>
+          <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightStart" value="${r.flightStart || ''}"></td>
+          <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightEnd" value="${r.flightEnd || ''}"></td>
+          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedPaidMedia">${btNum(r.approvedPaidMedia).toLocaleString('en-US')}</td>
+          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedMediaKit">${btNum(r.approvedMediaKit).toLocaleString('en-US')}</td>
+          <td contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="spent">${spent.toLocaleString('en-US')}</td>
+          <td style="text-align:right;font-weight:700">${pct}%</td>
+          <td class="row-delete-cell"><button class="icon-btn" data-delete-brow="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    if (statGrid) {
+      const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+      const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
+      const pctTotal = approvedTotal > 0 ? Math.round((spentTotal / approvedTotal) * 100) : 0;
+      statGrid.innerHTML = `
+        <div class="stat-card"><div class="stat-card-label">Aprobado total (USD)</div><div class="stat-card-value">${btMoney(approvedTotal)}</div></div>
+        <div class="stat-card"><div class="stat-card-label">Ejecutado total (USD)</div><div class="stat-card-value">${btMoney(spentTotal)}</div></div>
+        <div class="stat-card"><div class="stat-card-label">% ejecutado</div><div class="stat-card-value">${pctTotal}%</div></div>
+        <div class="stat-card"><div class="stat-card-label">Filas en este rango</div><div class="stat-card-value">${rows.length}</div></div>
+      `;
+    }
+  }
+
+  document.querySelectorAll('#btDateFilters .filter-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btState.range = btn.dataset.btRange;
+      document.querySelectorAll('#btDateFilters .filter-chip').forEach((b) => b.classList.toggle('active', b === btn));
+      renderBudgetTracker();
+    });
+  });
+
+  document.getElementById('btAddRowBtn').addEventListener('click', () => {
+    budgetTracker.unshift({ id: uid('bt'), campaign: '', country: '', retailer: '', channel: '', kind: 'Paid Media', flightStart: '', flightEnd: '', approvedPaidMedia: 0, approvedMediaKit: 0, spent: 0 });
+    persistBudgetTracker();
+    renderBudgetTracker();
+  });
+
+  const btBodyEl = document.getElementById('btBody');
+  btBodyEl.addEventListener('focusout', (e) => {
+    const td = e.target.closest('td[contenteditable="true"]');
+    if (!td) return;
+    const row = budgetTracker.find((r) => r.id === td.dataset.brow);
+    if (!row) return;
+    const key = td.dataset.bkey;
+    const isNumeric = ['approvedPaidMedia', 'approvedMediaKit', 'spent'].indexOf(key) !== -1;
+    row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
+    persistBudgetTracker();
+    renderBudgetTracker();
+  });
+  btBodyEl.addEventListener('change', (e) => {
+    const input = e.target.closest('input[type="date"]');
+    if (!input) return;
+    const row = budgetTracker.find((r) => r.id === input.dataset.brow);
+    if (!row) return;
+    row[input.dataset.bkey] = input.value;
+    persistBudgetTracker();
+    renderBudgetTracker();
+  });
+  btBodyEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-delete-brow]');
+    if (!btn) return;
+    if (!confirm('¿Eliminar esta fila del Budget Tracker?')) return;
+    budgetTracker = budgetTracker.filter((r) => r.id !== btn.dataset.deleteBrow);
+    persistBudgetTracker();
+    renderBudgetTracker();
+  });
+
+  document.getElementById('btExportPdfBtn').addEventListener('click', () => {
+    const area = document.getElementById('btPrintArea');
+    if (!area) return;
+    const rows = btFilteredRows();
+    const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+    const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
+    const rangeLabel = { all: 'Todo el periodo', week: 'Esta semana', month: 'Este mes' }[btState.range] || 'Todo el periodo';
+    area.innerHTML = `
+      <div class="cr-print-topbar"></div>
+      <h1 style="font-size:24px;margin-bottom:4px;">Budget Tracker — Distrivalto Digital Marketing</h1>
+      <p style="color:#4B5478;margin-bottom:18px;">Rango: ${escapeHtml(rangeLabel)} · Generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })} · Todo en USD</p>
+      <div style="display:flex;gap:14px;margin-bottom:20px;">
+        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">Aprobado total</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${btMoney(approvedTotal)}</div></div>
+        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">Ejecutado total</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${btMoney(spentTotal)}</div></div>
+        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">% ejecutado</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${approvedTotal > 0 ? Math.round((spentTotal / approvedTotal) * 100) : 0}%</div></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+        <thead><tr style="background:#EEF6FF;">
+          ${['Campaña', 'País', 'Retailer', 'Canal', 'Tipo', 'Flight start', 'Flight end', 'Aprob. Paid Media', 'Aprob. Media Kit', 'Ejecutado', '%'].map((h) => `<th style="text-align:left;padding:8px 6px;border-bottom:1px solid #E6EAF5;">${h}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${rows.map((r) => {
+            const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
+            const spent = btNum(r.spent);
+            const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+            return `<tr>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.campaign || '')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.country || '')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.retailer || '')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.channel || '')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.kind || '')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.flightStart || '—')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.flightEnd || '—')}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.approvedPaidMedia)}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.approvedMediaKit)}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.spent)}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;font-weight:700;">${pct}%</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+    printAreaWhenReady(area);
+  });
+
+  /* ------------------------------------------------------------------------
+     CAMPAIGN TRACKER — una fila por campaña (no por canal), con estado
+     calculado en vivo por fecha (Activa / Próxima / Finalizada / Sin fecha)
+     en vez de un campo manual que alguien se olvida de actualizar.
+     ------------------------------------------------------------------------ */
+
+  const ctState = { status: 'all' };
+
+  function ctComputeStatus(row) {
+    if (!row.flightStart && !row.flightEnd) return 'Sin fecha';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = row.flightStart ? new Date(row.flightStart + 'T00:00:00') : null;
+    const end = row.flightEnd ? new Date(row.flightEnd + 'T00:00:00') : null;
+    if (start && today < start) return 'Próxima';
+    if (end && today > end) return 'Finalizada';
+    return 'Activa';
+  }
+
+  function ctStatusFilterKey(label) {
+    if (label === 'Activa') return 'active';
+    if (label === 'Próxima') return 'upcoming';
+    if (label === 'Finalizada') return 'ended';
+    return 'other';
+  }
+
+  function ctBadgeColor(label) {
+    if (label === 'Activa') return 'background:rgba(14,159,110,.12);color:#0E9F6E;';
+    if (label === 'Próxima') return 'background:rgba(61,183,255,.14);color:#2E8FDB;';
+    if (label === 'Finalizada') return 'background:rgba(139,147,184,.16);color:#4B5478;';
+    return 'background:rgba(231,163,62,.16);color:#8A5A00;';
+  }
+
+  function ctFilteredRows() {
+    return campaignTracker.filter((r) => ctState.status === 'all' || ctStatusFilterKey(ctComputeStatus(r)) === ctState.status);
+  }
+
+  function renderCampaignTracker() {
+    const body = document.getElementById('ctBody');
+    if (!body) return;
+    const empty = document.getElementById('ctEmpty');
+    const rows = ctFilteredRows();
+
+    if (rows.length === 0) { body.innerHTML = ''; if (empty) empty.hidden = false; return; }
+    if (empty) empty.hidden = true;
+
+    body.innerHTML = rows.map((r) => {
+      const status = ctComputeStatus(r);
+      return `
+      <tr>
+        <td contenteditable="true" data-crowt="${r.id}" data-ckey="campaign">${escapeHtml(r.campaign || '')}</td>
+        <td contenteditable="true" data-crowt="${r.id}" data-ckey="country">${escapeHtml(r.country || '')}</td>
+        <td contenteditable="true" data-crowt="${r.id}" data-ckey="retailer">${escapeHtml(r.retailer || '')}</td>
+        <td contenteditable="true" data-crowt="${r.id}" data-ckey="platforms">${escapeHtml(r.platforms || '')}</td>
+        <td contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="approvedBudget">${btNum(r.approvedBudget).toLocaleString('en-US')}</td>
+        <td contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="spent">${btNum(r.spent).toLocaleString('en-US')}</td>
+        <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightStart" value="${r.flightStart || ''}"></td>
+        <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightEnd" value="${r.flightEnd || ''}"></td>
+        <td><span style="display:inline-block;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;${ctBadgeColor(status)}">${status}</span></td>
+        <td class="row-delete-cell"><button class="icon-btn" data-delete-crowt="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.querySelectorAll('#ctStatusFilters .filter-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      ctState.status = btn.dataset.ctStatus;
+      document.querySelectorAll('#ctStatusFilters .filter-chip').forEach((b) => b.classList.toggle('active', b === btn));
+      renderCampaignTracker();
+    });
+  });
+
+  document.getElementById('ctAddRowBtn').addEventListener('click', () => {
+    campaignTracker.unshift({ id: uid('ct'), campaign: '', country: '', retailer: '', platforms: '', approvedBudget: 0, spent: 0, flightStart: '', flightEnd: '' });
+    persistCampaignTracker();
+    renderCampaignTracker();
+  });
+
+  const ctBodyEl = document.getElementById('ctBody');
+  ctBodyEl.addEventListener('focusout', (e) => {
+    const td = e.target.closest('td[contenteditable="true"]');
+    if (!td) return;
+    const row = campaignTracker.find((r) => r.id === td.dataset.crowt);
+    if (!row) return;
+    const key = td.dataset.ckey;
+    const isNumeric = ['approvedBudget', 'spent'].indexOf(key) !== -1;
+    row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
+    persistCampaignTracker();
+    renderCampaignTracker();
+  });
+  ctBodyEl.addEventListener('change', (e) => {
+    const input = e.target.closest('input[type="date"]');
+    if (!input) return;
+    const row = campaignTracker.find((r) => r.id === input.dataset.crowt);
+    if (!row) return;
+    row[input.dataset.ckey] = input.value;
+    persistCampaignTracker();
+    renderCampaignTracker();
+  });
+  ctBodyEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-delete-crowt]');
+    if (!btn) return;
+    if (!confirm('¿Eliminar esta campaña del tracker?')) return;
+    campaignTracker = campaignTracker.filter((r) => r.id !== btn.dataset.deleteCrowt);
+    persistCampaignTracker();
+    renderCampaignTracker();
+  });
 
   inventoryBodyDelegation();
   campaignBodyDelegation();

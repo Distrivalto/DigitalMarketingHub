@@ -51,7 +51,7 @@
     'view-dashboard', 'view-projects', 'view-tasks', 'view-objectives',
     'view-activationFramework', 'view-briefs', 'view-contentInputs', 'view-calendar', 'view-inventory', 'view-access',
     'view-audit', 'view-quickwins', 'view-reports', 'view-notes', 'view-timeline',
-    'view-settings', 'view-docs',
+    'view-settings', 'view-docs', 'view-budgetTracker', 'view-campaignTracker',
   ];
 
   window.__hubCanEditKey = function (key) {
@@ -83,7 +83,7 @@
     // Briefs, Calendario, Registro de Campañas) — esas excepciones son solo
     // para gente del equipo que inició sesión.
     var isViewer = window.__hubRole !== 'contributor';
-    var viewerMsg = 'Solo lectura. Inicia sesión (botón abajo a la derecha) si sos del equipo y necesitás editar.';
+    var viewerMsg = 'Solo lectura. El equipo puede iniciar sesión (botón abajo a la derecha) para editar.';
     ALL_VIEW_IDS.forEach(function (id) {
       if (!isViewer && TEAM_EDITABLE_VIEW_IDS.indexOf(id) !== -1) return;
       var view = document.getElementById(id);

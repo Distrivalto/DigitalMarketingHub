@@ -113,6 +113,14 @@
         <svg viewBox="0 0 24 24" class="nav-icon"><path d="M6 20V10M12 20V4M18 20v-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Reports</span>
       </button>
+      <button class="nav-item" data-view="budgetTracker">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 14h3M7.5 16.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Budget Tracker</span>
+      </button>
+      <button class="nav-item" data-view="campaignTracker">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Campaign Tracker</span>
+      </button>
       <button class="nav-item" data-view="notes">
         <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Meeting Notes</span>
@@ -812,6 +820,7 @@
         <div class="af-tabs" id="reportsTabs">
           <button class="af-tab active" data-reports-tab="general">General</button>
           <button class="af-tab" data-reports-tab="campaigns">Campañas</button>
+          <button class="af-tab" data-reports-tab="baseline">Baseline LATAM</button>
         </div>
 
         <div class="reports-tab-panel active" id="reportsPanel-general">
@@ -878,6 +887,101 @@
             </table>
             <div class="table-empty" id="campaignReportEmpty" hidden>Todavía no hay reportes de campaña. Usa "+ Nuevo Reporte" para crear el primero (empezando por Back to School).</div>
           </div>
+        </div>
+
+        <div class="reports-tab-panel" id="reportsPanel-baseline">
+          <p class="view-intro" style="margin-bottom:14px;">Baseline de mercado — hogar / housewares / small appliances en LATAM — para juzgar si una campaña rindió bien "vs. el mercado", no solo vs. sí misma. Es la misma tabla que se usa para los chips (Por encima / En rango / Por debajo) en cada reporte de campaña. Fuente completa: <code>Baseline_KPIs_Meta_Hogar_by_Country.md</code>, actualizada 14 sep 2026.</p>
+
+          <div class="table-card" style="margin-bottom:22px;">
+            <table class="data-table">
+              <thead><tr><th>País / Región</th><th>CPM típico</th><th>CPC típico</th><th>CTR típico</th><th>Nota</th></tr></thead>
+              <tbody>
+                <tr><td><strong>República Dominicana</strong></td><td>RD$350–900 (~$5.8–15)</td><td>—</td><td>0.8–1.5% aceptable · &gt;2% óptimo</td><td>Cross-industry local, no home-específico — usar fila LATAM ecommerce para costos en USD</td></tr>
+                <tr><td>LATAM overall (todas las verticales)</td><td>~$0.70</td><td>~$0.08</td><td>~0.95%</td><td>Mediana regional Emplifi Q2 2026</td></tr>
+                <tr><td><strong>LATAM ecommerce</strong></td><td>~$2.30</td><td>~$0.13</td><td>~1.57%</td><td>Mejor comparable primario para tráfico/ecomm Holstein en LATAM</td></tr>
+                <tr><td>México</td><td>$3–5</td><td>$0.30–0.80</td><td>~1.6% (usar LATAM ecomm + Home)</td><td>Costos país retail/ecomm</td></tr>
+                <tr><td>Colombia</td><td>$2–4</td><td>$0.20–0.60</td><td>~1.6%</td><td>Mercado de entrada eficiente en LATAM</td></tr>
+                <tr><td>Perú</td><td>$2–4</td><td>$0.20–0.60</td><td>~1.6%</td><td>Ecommerce emergente</td></tr>
+                <tr><td>Chile</td><td>$4–7</td><td>Ecomm $0.40–1.00 · Hogar ~$0.10</td><td>Hogar 2.8–4.5%</td><td>Tabla local de Hogar más fuerte en LATAM</td></tr>
+                <tr><td>Brasil</td><td>~$2.60–4.20</td><td>~$0.35</td><td>1.8–2.8%</td><td>Comparable regional, mercado en portugués</td></tr>
+                <tr><td>Argentina</td><td>~$0.80–3.80</td><td>~$0.38</td><td>—</td><td>Volatilidad cambiaria — Meta factura en USD</td></tr>
+                <tr><td>USA (contexto)</td><td>~$14–23</td><td>$0.85–0.99</td><td>1.28–2.38%</td><td>Mercado de alto costo — no comparar RD/LATAM contra USA</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead><tr><th>Métrica</th><th>Pobre</th><th>Promedio</th><th>Bueno</th><th>Excelente</th></tr></thead>
+              <tbody>
+                <tr><td><strong>CTR link</strong></td><td>&lt;0.8%</td><td>0.8–1.5%</td><td>1.5–2.5%</td><td>&gt;2.5%</td></tr>
+                <tr><td><strong>CPC link (LATAM)</strong></td><td>&gt;$0.40</td><td>$0.15–0.40</td><td>$0.05–0.15</td><td>&lt;$0.05</td></tr>
+                <tr><td><strong>CPM (LATAM ecomm)</strong></td><td>&gt;$5</td><td>$2.5–5</td><td>$1–2.5</td><td>&lt;$1</td></tr>
+                <tr><td><strong>CPR / Costo por visita destino</strong></td><td>&gt;$0.50</td><td>$0.25–0.50</td><td>$0.10–0.25</td><td>&lt;$0.10</td></tr>
+                <tr><td><strong>Frequency (~7d prospecting)</strong></td><td>&gt;3.5 riesgo de fatiga</td><td>2.5–3.5 vigilar</td><td colspan="2">1.5–2.5 saludable</td></tr>
+                <tr><td><strong>Click → Visita destino</strong></td><td>&lt;60% investigar</td><td>60–70%</td><td colspan="2">≥70% fuerte</td></tr>
+              </tbody>
+            </table>
+            <p class="view-intro" style="margin:16px;">Lectura de costos (CPC, CPM, CPR): más bajo = mejor, "Por encima" significa más eficiente que el mercado. Lectura de CTR / Click→Visita: más alto = mejor. Fuentes 2023–2026: WordStream/LocaliQ Home (2025), Triple Whale &amp; MHI Home &amp; Garden (2025–2026), Emplifi LATAM ecommerce Q2 2026, Itera/Lebesgue/AdAmigo (2026), Muller y Pérez Chile Hogar (Q2 2026), Gmedia RD (2025). No se usa moda/beauty como comparable primario.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BUDGET TRACKER ============ -->
+      <section class="view" id="view-budgetTracker">
+        <p class="view-intro" style="margin-bottom:14px;">Mismos datos del Budget_Tracker_Q3.xlsx, en vivo: presupuesto aprobado vs. ejecutado por campaña y canal, en USD. Filtrable por fecha (Flight start) y exportable a PDF.</p>
+        <div class="stat-grid" id="btStatGrid" style="margin-bottom:18px;"></div>
+        <div class="toolbar">
+          <div class="filter-group" id="btDateFilters">
+            <button class="filter-chip active" data-bt-range="all">Todo</button>
+            <button class="filter-chip" data-bt-range="week">Esta semana</button>
+            <button class="filter-chip" data-bt-range="month">Este mes</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost" id="btExportPdfBtn">Descargar PDF</button>
+          <button class="btn btn-primary" id="btAddRowBtn">+ Agregar fila</button>
+        </div>
+        <div class="table-card">
+          <table class="data-table" id="btTable">
+            <thead>
+              <tr>
+                <th>Campaña</th><th>País</th><th>Retailer</th><th>Canal</th><th>Tipo</th>
+                <th>Flight start</th><th>Flight end</th>
+                <th>Aprobado Paid Media (USD)</th><th>Aprobado Media Kit (USD)</th>
+                <th>Ejecutado (USD)</th><th>% ejecutado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="btBody"></tbody>
+          </table>
+          <div class="table-empty" id="btEmpty" hidden>No hay filas todavía — agrega la primera o corre el SQL de carga inicial.</div>
+        </div>
+      </section>
+
+      <!-- ============ CAMPAIGN TRACKER ============ -->
+      <section class="view" id="view-campaignTracker">
+        <p class="view-intro" style="margin-bottom:14px;">Qué campaña está activa ahora mismo (hoy), con qué presupuesto y en qué plataformas — estado calculado solo por fecha de flight, sin que nadie tenga que actualizarlo a mano.</p>
+        <div class="toolbar">
+          <div class="filter-group" id="ctStatusFilters">
+            <button class="filter-chip active" data-ct-status="all">Todas</button>
+            <button class="filter-chip" data-ct-status="active">Activas ahora</button>
+            <button class="filter-chip" data-ct-status="upcoming">Próximas</button>
+            <button class="filter-chip" data-ct-status="ended">Finalizadas</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-primary" id="ctAddRowBtn">+ Agregar campaña</button>
+        </div>
+        <div class="table-card">
+          <table class="data-table" id="ctTable">
+            <thead>
+              <tr>
+                <th>Campaña</th><th>País</th><th>Retailer</th><th>Plataformas</th>
+                <th>Presupuesto aprobado (USD)</th><th>Ejecutado (USD)</th>
+                <th>Flight start</th><th>Flight end</th><th>Estado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="ctBody"></tbody>
+          </table>
+          <div class="table-empty" id="ctEmpty" hidden>No hay campañas todavía — agrega la primera.</div>
         </div>
       </section>
 
@@ -1005,6 +1109,7 @@
 
 <!-- Área imprimible para exportar un reporte de campaña a PDF -->
 <div class="cr-print-area" id="crPrintArea"></div>
+<div class="cr-print-area" id="btPrintArea"></div>
 
 <script src="auth-gate.js"></script>
 </body>
