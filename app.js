@@ -513,7 +513,7 @@
     {
       id: uid('kr'), quarter: 'Q3', done: true,
       title: 'Campañas Piloto Medibles — 3 activaciones',
-      desc: 'Se activan 3 campañas digitales en Q3: Back to School (EEUU) — agosto, Heritage Month (EEUU) — septiembre, y Día WOW CCN (Casa Cuesta, RD) — septiembre. (La Mega Promo Ecuador quedó excluida: el retailer la lanzó por su cuenta, sin ejecución de Digital — Día WOW pasó a ser el piloto #3 confirmado.) Cada una segmentada a su público específico, con objetivo, canal, presupuesto y KPIs propios definidos en el brief antes del lanzamiento. Las 3 ya están lanzadas — KPI1 (on-time) 83,3% y KPI2 (measurement compliance) 33,3% a la fecha, ver Budget Tracker Q3.',
+      desc: 'Se activan 3 campañas digitales en Q3: Back to School (EEUU) — agosto, Heritage Month (EEUU) — septiembre, y Día WOW CCN (Casa Cuesta, RD) — septiembre. (La Mega Promo Ecuador quedó excluida: el retailer la lanzó por su cuenta, sin ejecución de Digital — Día WOW pasó a ser el piloto #3 confirmado.) Cada una segmentada a su público específico, con objetivo, canal, presupuesto y KPIs propios definidos en el brief antes del lanzamiento. Las 3 ya están lanzadas — KPI1 (on-time) 83,3% (5/6) y KPI2 (measurement compliance interino) 100% (6/6) a la fecha, ver Budget Tracker Q3.',
       sections: [
         { heading: 'Entregables', items: [
           'Cada una de las 3 campañas activada y lanzada en su fecha.',
@@ -1030,7 +1030,7 @@
       tags: ['CCN RD'],
       description: 'Activación digital con Jumbo (Grupo CCN) en dos tiendas de Santo Domingo — Luperón y Megacentro — vía Meta Ads, parte del piloto de canal propio en RD junto a Casa Cuesta.',
       objective: 'Generar alcance y engagement local para cada activación en tienda, con budget lean de Meta Ads por ubicación.',
-      result: 'Luperón: post de invitación publicado 20-21 sep, $150 de $150 ejecutado (100%). Megacentro: activación lanzada 22 sep on-time, $150 de $150 ejecutado (100%), corrió hasta el 27 sep.',
+      result: 'Luperón: post completado, $150 de $150 ejecutado (100%), 449,613 de alcance, 785,851 impresiones, 1,031 clics en el enlace (Meta Ads Manager). Megacentro: activación lanzada 22 sep on-time, $72.71 de $150 ejecutado hasta ahora (en curso, cerró 27 sep), 267,187 de alcance, 382,524 impresiones, 450 clics en el enlace (Meta Ads Manager). Ambas compliant interino en KPI2 con estos resultados reales.',
       deliverable: 'Propuesta docx + 2 activaciones de Meta Ads + entrada real en Budget Tracker y Campaign Tracker del HUB.',
       tasks: [
         { id: uid('pt'), title: 'Propuesta y aprobación', done: true, subtasks: [
@@ -1045,8 +1045,8 @@
           { id: uid('pst'), title: 'Activación lanzada 22 sep, on-time', done: true },
           { id: uid('pst'), title: 'Cerró 27 sep, $150 ejecutado (100%)', done: true },
         ] },
-        { id: uid('pt'), title: 'Cierre', done: false, subtasks: [
-          { id: uid('pst'), title: 'Resultado de alcance/engagement pendiente para cerrar medición', done: false },
+        { id: uid('pt'), title: 'Cierre', done: true, subtasks: [
+          { id: uid('pst'), title: 'Resultado real capturado en Meta Ads Manager (Luperón y Megacentro) — compliant interino KPI2', done: true },
         ] },
       ],
     },
@@ -1177,7 +1177,7 @@
     { name: 'Execution Guide (Guía paso a paso)', desc: 'Objective, concrete steps, tools, and expected deliverable for each of the 27 items.', href: '../02 - Plan 30-60-90/Guia_Ejecucion_Plan_30-60-90.docx' },
     { name: 'Digital Ecosystem Diagnosis', desc: 'Deliverable #1 of the 30-day phase — living document with real audit findings.', href: '../03 - Diagnostico Ecosistema Digital/Diagnostico_Ecosistema_Digital.docx' },
     { name: 'KPIs & OKRs H2 2026 (Final)', desc: 'Final KPIs and OKRs agreed with the Marketing Manager — Q3/Q4 key results and pilot campaign briefs.', href: '../04 - KPIs y OKRs H2 2026/Final_Propuesta_KPIs_OKRs_2026.docx' },
-    { name: 'Budget Tracker Q3 2026', desc: 'Approved vs. executed budget per campaign, split Paid Media / Media Kit (Ecomm), all in USD — KPI1 83.3%, KPI2 33.3% (in-flight campaigns pending final report). Updated 24 Sep 2026.', href: '../30 - Budget Tracker Campanas/Budget_Tracker_Q3.xlsx' },
+    { name: 'Budget Tracker Q3 2026', desc: 'Approved vs. executed budget per campaign, split Paid Media / Media Kit (Ecomm), all in USD — KPI1 83.3% (5/6), KPI2 100% interino (6/6; strict closed-report definition = 33.3%, 2/6). Updated 25 Sep 2026.', href: '../30 - Budget Tracker Campanas/Budget_Tracker_Q3.xlsx' },
     { name: 'Reporte Día WOW CCN (Casa Cuesta, RD)', desc: 'Piloto #3 de KR2 — reporte completo de campaña: Meta Ads + Media Kit Ecomm, $3.699,18 ejecutado de $3.700 aprobado.', href: '../Republica Dominicana/25 - CCN Casa Cuesta y Jumbo/Reporte_Dia_WOW_2026.html' },
     { name: 'Reporte Back to School USA', desc: 'Reporte consolidado ECOMM + Digital de la campaña BTS — piloto de KR2, resultados y metodología de medición.', href: '../USA/06 - Back to School USA 2026/Reporte_Consolidado_BTS_2026.html' },
   ];
