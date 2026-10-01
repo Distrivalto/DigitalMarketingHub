@@ -1030,7 +1030,7 @@
       tags: ['CCN RD'],
       description: 'Activación digital con Jumbo (Grupo CCN) en dos tiendas de Santo Domingo — Luperón y Megacentro — vía Meta Ads, parte del piloto de canal propio en RD junto a Casa Cuesta.',
       objective: 'Generar alcance y engagement local para cada activación en tienda, con budget lean de Meta Ads por ubicación.',
-      result: 'Luperón: post completado, $150 de $150 ejecutado (100%), 449,613 de alcance, 785,851 impresiones, 1,031 clics en el enlace (Meta Ads Manager). Megacentro: activación lanzada 22 sep on-time, $72.71 de $150 ejecutado hasta ahora (en curso, cerró 27 sep), 267,187 de alcance, 382,524 impresiones, 450 clics en el enlace (Meta Ads Manager). Ambas compliant interino en KPI2 con estos resultados reales.',
+      result: 'CERRADO. Luperón: $150 de $150 ejecutado (100%), 449,613 de alcance, 785,851 impresiones, 1,031 clics en el enlace (Meta Ads Manager). Megacentro: $149.99 de $150 ejecutado (99.9%, cerró 27 sep), 430,702 de alcance, 770,569 impresiones, 1,004 clics en el enlace (Meta Ads Manager). Combinado: $299.99 de $300 (99.99%), 660,832 de alcance, 1,556,420 impresiones, 2,035 clics en el enlace, CPC blended $0.147. Post-report final cerrado 28 sep 2026.',
       deliverable: 'Propuesta docx + 2 activaciones de Meta Ads + entrada real en Budget Tracker y Campaign Tracker del HUB.',
       tasks: [
         { id: uid('pt'), title: 'Propuesta y aprobación', done: true, subtasks: [
@@ -1081,7 +1081,7 @@
       tags: ['KR2'],
       description: 'Campaña piloto de KR2 en Ecommerce USA (Amazon + Walmart) para el mes de la Herencia Hispana, con Meta, Pinterest y TikTok corriendo en fases.',
       objective: 'Generar reach, engagement y tráfico hacia las tiendas de marca en Amazon y Walmart durante la ventana de Hispanic Heritage Month.',
-      result: 'Go-live real 6 sep (antes del 15 sep planeado). Primera fase activa: Meta $500 + Pinterest $100 + TikTok $500 = $1,100 de los $3,101 aprobados. TikTok activado 23 sep (6 UGC + 3 perfil, OK Creative). Cierra 15 oct — post-report final recién en Q4.',
+      result: 'Reporte preliminar, actualizado 28 sep (campaña sigue activa hasta 15 oct). Meta: $262.13 de $500, 41,763 impresiones, 34,530 alcance, 1,720 clics, CTR 4.51% (casi el doble del "excelente" de industria hogar, 2.5%) — el canal más eficiente hasta ahora, con el CPC más bajo ($0.15). Pinterest: $36.40 de $100, 10,193 impresiones, 7,435 alcance, 58 clics de salida. TikTok (activado 23 sep, apenas 5 días de flight a este corte, 9 creativos UGC+propios): $115.34 de $500, 14,009 impresiones, 336 clics, CPC $0.34 — a seguir de cerca. Total: $413.87 de $1,100 fase 1 (37.6%). Post-report final en Q4, tras el cierre 15 oct.',
       deliverable: 'Estrategia + entrada real en Budget Tracker y Campaign Tracker del HUB.',
       tasks: [
         { id: uid('pt'), title: 'Estrategia y presupuesto', done: true, subtasks: [
@@ -1137,6 +1137,7 @@
     'RD Jumbo (Patatus) — Luperón y Megacentro': [
       { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
       { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+      { label: 'Ver reporte visual completo', href: 'reports/Reporte_Patatus_2026.html' },
     ],
     'Falabella Aniversario CO': [
       { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
@@ -1145,6 +1146,7 @@
     'Hispanic Heritage Month USA': [
       { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
       { label: 'Ver en Campaign Tracker', view: 'campaignTracker' },
+      { label: 'Ver reporte visual completo', href: 'reports/Reporte_HHM_2026.html' },
     ],
     'Back to School USA 2026': [
       { label: 'Ver en Budget Tracker', view: 'budgetTracker' },
@@ -1180,6 +1182,8 @@
     { name: 'Budget Tracker Q3 2026', desc: 'Approved vs. executed budget per campaign, split Paid Media / Media Kit (Ecomm), all in USD — KPI1 83.3% (5/6), KPI2 100% interino (6/6; strict closed-report definition = 33.3%, 2/6). Updated 25 Sep 2026.', href: '../30 - Budget Tracker Campanas/Budget_Tracker_Q3.xlsx' },
     { name: 'Reporte Día WOW CCN (Casa Cuesta, RD)', desc: 'Piloto #3 de KR2 — reporte completo de campaña: Meta Ads + Media Kit Ecomm, $3.699,18 ejecutado de $3.700 aprobado.', href: '../Republica Dominicana/25 - CCN Casa Cuesta y Jumbo/Reporte_Dia_WOW_2026.html' },
     { name: 'Reporte Back to School USA', desc: 'Reporte consolidado ECOMM + Digital de la campaña BTS — piloto de KR2, resultados y metodología de medición.', href: '../USA/06 - Back to School USA 2026/Reporte_Consolidado_BTS_2026.html' },
+    { name: 'Reporte Patatus Jumbo RD (Luperón + Megacentro)', desc: 'Reporte final — ambas activaciones cerradas, $299.99 de $300 ejecutado, 1.5M+ impresiones combinadas.', href: '../Republica Dominicana/25 - CCN Casa Cuesta y Jumbo/Reporte_Patatus_2026.html' },
+    { name: 'Reporte Hispanic Heritage Month USA', desc: 'Reporte preliminar — Meta + Pinterest + TikTok en paralelo, campaña activa hasta 15 oct.', href: '../USA/14 - Hispanic Heritage Month 2026/Reporte_HHM_2026.html' },
   ];
 
   const DEFAULT_CAMPAIGN_PLATFORMS = ['Facebook', 'Instagram', 'Meta Ads (Total)', 'TikTok', 'Pinterest', 'Google Ads', 'LinkedIn', 'Amazon Attribution', 'Walmart'];
@@ -5757,8 +5761,9 @@
 
   function btRowTpl(r) {
     const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
+    const activated = btNum(r.activated);
     const spent = btNum(r.spent);
-    const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+    const pct = activated > 0 ? Math.round((spent / activated) * 100) : 0;
     return `
     <tr data-brow-tr="${r.id}">
       <td class="bt-editable" style="padding-left:24px;" contenteditable="true" data-brow="${r.id}" data-bkey="channel">${escapeHtml(r.channel || '')}</td>
@@ -5769,6 +5774,7 @@
       <td><input type="date" class="text-input" style="min-width:130px" data-brow="${r.id}" data-bkey="flightEnd" value="${r.flightEnd || ''}"></td>
       <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedPaidMedia">${btNum(r.approvedPaidMedia).toLocaleString('en-US')}</td>
       <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="approvedMediaKit">${btNum(r.approvedMediaKit).toLocaleString('en-US')}</td>
+      <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="activated" title="Cuánto de lo aprobado ya se encendió/activó en la plataforma, por fase o de una sola vez">${activated.toLocaleString('en-US')}</td>
       <td class="bt-editable" contenteditable="true" style="text-align:right" data-brow="${r.id}" data-bkey="spent">${spent.toLocaleString('en-US')}</td>
       <td style="text-align:right;font-weight:700" data-brow-pct="${r.id}">${pct}%</td>
       <td class="row-delete-cell"><button class="icon-btn" data-delete-brow="${r.id}" aria-label="Delete row"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></td>
@@ -5777,8 +5783,9 @@
 
   function btGroupHeaderTpl(g) {
     const approved = g.rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+    const activated = g.rows.reduce((s, r) => s + btNum(r.activated), 0);
     const spent = g.rows.reduce((s, r) => s + btNum(r.spent), 0);
-    const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+    const pct = activated > 0 ? Math.round((spent / activated) * 100) : 0;
     const first = g.rows[0] || {};
     return `
     <tr class="bt-group-row" data-bgroup="${escapeHtml(g.campaign)}">
@@ -5786,6 +5793,7 @@
       <td colspan="3">${g.rows.length} activación${g.rows.length === 1 ? '' : 'es'}</td>
       <td style="text-align:right">${btMoney(approved)}</td>
       <td></td>
+      <td style="text-align:right">${btMoney(activated)}</td>
       <td style="text-align:right">${btMoney(spent)}</td>
       <td style="text-align:right;font-weight:700">${pct}%</td>
       <td></td>
@@ -5819,13 +5827,15 @@
     const rows = btFilteredRows();
     if (statGrid) {
       const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+      const activatedTotal = rows.reduce((s, r) => s + btNum(r.activated), 0);
       const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
-      const pctTotal = approvedTotal > 0 ? Math.round((spentTotal / approvedTotal) * 100) : 0;
+      const pctTotal = activatedTotal > 0 ? Math.round((spentTotal / activatedTotal) * 100) : 0;
       const campaignCount = new Set(rows.map((r) => r.campaign || '(Sin campaña)')).size;
       statGrid.innerHTML = `
         <div class="stat-card"><div class="stat-card-label">Aprobado total (USD)</div><div class="stat-card-value">${btMoney(approvedTotal)}</div></div>
+        <div class="stat-card"><div class="stat-card-label">Activado total (USD)</div><div class="stat-card-value">${btMoney(activatedTotal)}</div></div>
         <div class="stat-card"><div class="stat-card-label">Ejecutado total (USD)</div><div class="stat-card-value">${btMoney(spentTotal)}</div></div>
-        <div class="stat-card"><div class="stat-card-label">% ejecutado</div><div class="stat-card-value">${pctTotal}%</div></div>
+        <div class="stat-card"><div class="stat-card-label">% ejecutado sobre activado</div><div class="stat-card-value">${pctTotal}%</div></div>
         <div class="stat-card"><div class="stat-card-label">Campañas en este rango</div><div class="stat-card-value">${campaignCount}</div></div>
       `;
     }
@@ -5857,7 +5867,7 @@
   }
 
   document.getElementById('btAddRowBtn').addEventListener('click', () => {
-    budgetTracker.unshift({ id: uid('bt'), campaign: '', country: '', retailer: '', channel: '', kind: 'Paid Media', flightStart: '', flightEnd: '', approvedPaidMedia: 0, approvedMediaKit: 0, spent: 0 });
+    budgetTracker.unshift({ id: uid('bt'), campaign: '', country: '', retailer: '', channel: '', kind: 'Paid Media', flightStart: '', flightEnd: '', approvedPaidMedia: 0, approvedMediaKit: 0, activated: 0, spent: 0 });
     persistBudgetTracker();
     renderBudgetTracker();
   });
@@ -5880,7 +5890,7 @@
     const row = budgetTracker.find((r) => r.id === td.dataset.brow);
     if (!row) return;
     const key = td.dataset.bkey;
-    const isNumeric = ['approvedPaidMedia', 'approvedMediaKit', 'spent'].indexOf(key) !== -1;
+    const isNumeric = ['approvedPaidMedia', 'approvedMediaKit', 'activated', 'spent'].indexOf(key) !== -1;
     row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
     persistBudgetTracker();
     // Si se editó el nombre de campaña, la fila puede tener que reflowear a
@@ -5891,8 +5901,8 @@
     } else {
       const pctCell = document.querySelector(`[data-brow-pct="${row.id}"]`);
       if (pctCell) {
-        const approved = btNum(row.approvedPaidMedia) + btNum(row.approvedMediaKit);
-        const pct = approved > 0 ? Math.round((btNum(row.spent) / approved) * 100) : 0;
+        const activated = btNum(row.activated);
+        const pct = activated > 0 ? Math.round((btNum(row.spent) / activated) * 100) : 0;
         pctCell.textContent = pct + '%';
       }
       btUpdateStatsAndGroupHeaders();
@@ -5921,6 +5931,7 @@
     if (!area) return;
     const rows = btFilteredRows();
     const approvedTotal = rows.reduce((s, r) => s + btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit), 0);
+    const activatedTotal = rows.reduce((s, r) => s + btNum(r.activated), 0);
     const spentTotal = rows.reduce((s, r) => s + btNum(r.spent), 0);
     const rangeLabel = { all: 'Todo el periodo', week: 'Esta semana', month: 'Este mes', year: 'Este año', custom: `${btState.customFrom || '…'} – ${btState.customTo || '…'}` }[btState.range] || 'Todo el periodo';
     area.innerHTML = `
@@ -5929,18 +5940,19 @@
       <p style="color:#4B5478;margin-bottom:18px;">Rango: ${escapeHtml(rangeLabel)} · Generado ${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })} · Todo en USD</p>
       <div style="display:flex;gap:14px;margin-bottom:20px;">
         <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">Aprobado total</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${btMoney(approvedTotal)}</div></div>
+        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">Activado total</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${btMoney(activatedTotal)}</div></div>
         <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">Ejecutado total</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${btMoney(spentTotal)}</div></div>
-        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">% ejecutado</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${approvedTotal > 0 ? Math.round((spentTotal / approvedTotal) * 100) : 0}%</div></div>
+        <div style="flex:1;background:#EEF6FF;border-radius:12px;padding:14px 16px;"><div style="font-size:11px;color:#4B5478;text-transform:uppercase;">% ejecutado / activado</div><div style="font-size:20px;font-weight:800;color:#1D2B7F;">${activatedTotal > 0 ? Math.round((spentTotal / activatedTotal) * 100) : 0}%</div></div>
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
         <thead><tr style="background:#EEF6FF;">
-          ${['Campaña', 'País', 'Retailer', 'Canal', 'Tipo', 'Flight start', 'Flight end', 'Aprob. Paid Media', 'Aprob. Media Kit', 'Ejecutado', '%'].map((h) => `<th style="text-align:left;padding:8px 6px;border-bottom:1px solid #E6EAF5;">${h}</th>`).join('')}
+          ${['Campaña', 'País', 'Retailer', 'Canal', 'Tipo', 'Flight start', 'Flight end', 'Aprob. Paid Media', 'Aprob. Media Kit', 'Activado', 'Ejecutado', '%'].map((h) => `<th style="text-align:left;padding:8px 6px;border-bottom:1px solid #E6EAF5;">${h}</th>`).join('')}
         </tr></thead>
         <tbody>
           ${rows.map((r) => {
-            const approved = btNum(r.approvedPaidMedia) + btNum(r.approvedMediaKit);
+            const activated = btNum(r.activated);
             const spent = btNum(r.spent);
-            const pct = approved > 0 ? Math.round((spent / approved) * 100) : 0;
+            const pct = activated > 0 ? Math.round((spent / activated) * 100) : 0;
             return `<tr>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.campaign || '')}</td>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.country || '')}</td>
@@ -5951,6 +5963,7 @@
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;">${escapeHtml(r.flightEnd || '—')}</td>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.approvedPaidMedia)}</td>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.approvedMediaKit)}</td>
+              <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.activated)}</td>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;">${btMoney(r.spent)}</td>
               <td style="padding:7px 6px;border-bottom:1px solid #F0F2FA;text-align:right;font-weight:700;">${pct}%</td>
             </tr>`;
@@ -6025,6 +6038,7 @@
         <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="retailer">${escapeHtml(r.retailer || '')}</td>
         <td class="ct-editable" contenteditable="true" data-crowt="${r.id}" data-ckey="platforms">${escapeHtml(r.platforms || '')}</td>
         <td class="ct-editable" contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="approvedBudget">${btNum(r.approvedBudget).toLocaleString('en-US')}</td>
+        <td class="ct-editable" contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="activatedBudget" title="Cuánto de lo aprobado ya se activó, por fase o de una sola vez">${btNum(r.activatedBudget).toLocaleString('en-US')}</td>
         <td class="ct-editable" contenteditable="true" style="text-align:right" data-crowt="${r.id}" data-ckey="spent">${btNum(r.spent).toLocaleString('en-US')}</td>
         <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightStart" value="${r.flightStart || ''}"></td>
         <td><input type="date" class="text-input" style="min-width:130px" data-crowt="${r.id}" data-ckey="flightEnd" value="${r.flightEnd || ''}"></td>
@@ -6060,7 +6074,7 @@
   });
 
   document.getElementById('ctAddRowBtn').addEventListener('click', () => {
-    campaignTracker.unshift({ id: uid('ct'), campaign: '', country: '', retailer: '', platforms: '', approvedBudget: 0, spent: 0, flightStart: '', flightEnd: '' });
+    campaignTracker.unshift({ id: uid('ct'), campaign: '', country: '', retailer: '', platforms: '', approvedBudget: 0, activatedBudget: 0, spent: 0, flightStart: '', flightEnd: '' });
     persistCampaignTracker();
     renderCampaignTracker();
   });
@@ -6072,7 +6086,7 @@
     const row = campaignTracker.find((r) => r.id === td.dataset.crowt);
     if (!row) return;
     const key = td.dataset.ckey;
-    const isNumeric = ['approvedBudget', 'spent'].indexOf(key) !== -1;
+    const isNumeric = ['approvedBudget', 'activatedBudget', 'spent'].indexOf(key) !== -1;
     row[key] = isNumeric ? btNum(td.textContent.replace(/,/g, '')) : td.textContent.trim();
     persistCampaignTracker();
     // Actualización liviana (no re-renderiza toda la tabla) para no perder
